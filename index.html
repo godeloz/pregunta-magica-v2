@@ -1,0 +1,1650 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Pregunta mágica · DotX</title>
+<meta name="description" content="Construye tu pregunta mágica paso a paso y recibe un diagnóstico con una ruta de acción.">
+<meta name="theme-color" content="#783D7F">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Baloo+2:wght@500;600;700;800&family=Caveat:wght@600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --purple:#783D7F; --purple-dark:#5E1758; --purple-soft:#F3ECF4; --lilac:#E9DFF0;
+  --teal:#C3EAF0; --teal-dark:#2C9D98; --teal-soft:#E8F6F7;
+  --navy:#1E2A5E; --orange:#E39A3C; --orange-soft:#FCF1E3;
+  --ink:#3A3440; --ink-soft:#6B6370; --line:#E6E0E8; --bg:#EFECE6; --card:#FFFFFF;
+  --green:#12A150; --green-soft:#E6F5EC; --amber:#F5A524; --amber-soft:#FEF4E1; --red:#E5484D; --red-soft:#FDECEC;
+  --radius:22px;
+  --shadow:0 1px 2px rgba(30,20,40,.04), 0 10px 30px rgba(94,23,88,.07);
+}
+*{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:'Baloo 2',system-ui,-apple-system,'Segoe UI',sans-serif;font-size:17px;line-height:1.45;min-height:100vh}
+button,input,textarea,select{font:inherit;color:inherit}
+button{cursor:pointer}
+img{max-width:100%}
+.deco{position:fixed;left:0;bottom:0;width:260px;height:260px;pointer-events:none;z-index:0;display:none}
+.app{position:relative;z-index:1;max-width:680px;margin:0 auto;padding:12px 16px 56px}
+.app.wide{max-width:760px}
+
+/* top bar */
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:6px 0 10px}
+.brand{display:flex;align-items:center;gap:10px;min-width:0}
+.brand img{height:38px;width:auto;display:block;background:#fff;border-radius:10px;padding:3px 6px;box-shadow:0 1px 2px rgba(0,0,0,.05)}
+.brand span{font-family:'Caveat',cursive;font-size:22px;color:var(--purple);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.tools{display:flex;gap:8px}
+.icon-btn{width:40px;height:40px;border-radius:50%;border:1.5px solid var(--line);background:#fff;color:var(--purple);display:grid;place-items:center;transition:.15s}
+.icon-btn:hover{border-color:var(--purple);background:var(--purple-soft)}
+.progress{margin:2px 0 14px}
+.progress-track{height:6px;border-radius:99px;background:#E2DCE3;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--purple),#A05AA8);border-radius:99px;transition:width .35s ease}
+.progress-label{display:flex;justify-content:space-between;font-size:14px;color:var(--ink-soft);margin-top:6px}
+
+/* cards & type */
+.card{background:var(--card);border-radius:var(--radius);box-shadow:var(--shadow);padding:22px 20px;margin-bottom:14px;position:relative;overflow:hidden}
+.eyebrow{font-family:'Caveat',cursive;font-size:23px;line-height:1.1;color:var(--teal-dark);margin:0 0 2px}
+h1,h2,h3{font-weight:800;color:var(--purple-dark);margin:0}
+h1{font-size:30px;line-height:1.08;margin-bottom:8px}
+h2{font-size:22px;line-height:1.15;margin-bottom:6px}
+h3{font-size:18px;line-height:1.2}
+.lead{color:var(--ink-soft);margin:0 0 16px}
+.muted{color:var(--ink-soft)}
+.small{font-size:14.5px}
+p{margin:0 0 10px}
+
+/* fields */
+.field{margin:0 0 18px}
+.field>label,.qlabel{display:block;font-weight:700;color:var(--ink);margin-bottom:6px;line-height:1.25}
+.field .hint{font-size:14.5px;color:var(--ink-soft);margin:-2px 0 8px}
+input[type=text],input[type=email],textarea,select{width:100%;font-size:16.5px;border:1.5px solid var(--line);border-radius:14px;padding:12px 14px;background:#fff;outline:none;transition:border-color .15s, box-shadow .15s;line-height:1.35}
+textarea{resize:none;min-height:52px;overflow:hidden}
+input:focus,textarea:focus,select:focus{border-color:var(--purple);box-shadow:0 0 0 4px rgba(120,61,127,.12)}
+select{appearance:none;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='9'%3E%3Cpath d='M1 1l6 6 6-6' stroke='%23783D7F' stroke-width='2' fill='none' stroke-linecap='round'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:38px}
+.big-input{font-size:19px !important;font-weight:600;color:var(--purple)}
+.chips{display:flex;flex-wrap:wrap;gap:8px}
+.chip{border:1.5px solid var(--line);background:#fff;border-radius:999px;padding:9px 15px;font-size:15.5px;font-weight:600;line-height:1.2;color:var(--ink);transition:.15s;text-align:left}
+.chip:hover{border-color:var(--purple)}
+.chip.on{background:var(--purple);border-color:var(--purple);color:#fff}
+.req{color:var(--red);font-weight:700}
+.err{color:var(--red);font-size:14.5px;margin-top:6px;font-weight:600}
+
+/* helper boxes */
+.reminder{background:var(--teal-soft);border-radius:14px;padding:10px 14px;margin:0 0 14px;font-size:15.5px}
+.reminder b{color:var(--teal-dark)}
+.examples{background:#F8F5F1;border:1.5px dashed #E3DCD2;border-radius:14px;padding:10px 14px;margin:2px 0 16px}
+.examples .tag{font-family:'Caveat',cursive;font-size:20px;color:var(--orange);line-height:1}
+.examples ul{margin:4px 0 0;padding-left:18px;font-size:15.5px;color:var(--ink-soft)}
+.fixed-text{font-weight:700;color:var(--ink-soft);font-size:15.5px;margin-bottom:6px}
+
+.alerts{display:flex;flex-direction:column;gap:8px;margin:-6px 0 16px}
+.alert{border-radius:14px;padding:10px 12px 10px 14px;font-size:15.5px;display:flex;flex-wrap:wrap;gap:6px 10px;align-items:flex-start;background:var(--amber-soft);border-left:4px solid var(--amber)}
+.alert.good{background:var(--green-soft);border-left-color:var(--green)}
+.alert.soft{background:#F4F1F6;border-left-color:#B7A9BC}
+.alert.done{background:transparent;border:1.5px dashed var(--line);color:var(--ink-soft);font-size:14.5px;padding:7px 12px}
+.alert.done .mini{margin-left:0}
+.alert .ico{flex:none;font-size:17px;line-height:1.35}
+.alert .txt{flex:1 1 calc(100% - 40px)}
+.alert .mini{margin-left:27px;flex:none;border:none;background:rgba(255,255,255,.75);border-radius:999px;padding:4px 10px;font-size:13.5px;font-weight:700;color:var(--ink-soft)}
+.alert .mini:hover{background:#fff;color:var(--purple)}
+.fam-row{display:flex;flex-wrap:wrap;gap:6px;margin:-6px 0 16px}
+.fam{font-size:13.5px;font-weight:700;border-radius:999px;padding:4px 10px;background:#F1EEF2;color:#A39BA8;transition:.2s}
+.fam.on{color:#fff}
+
+/* live preview */
+.preview{background:linear-gradient(135deg,#fff 0%,#F7F1F8 55%,#EAF7F9 100%);border:1.5px solid var(--lilac);border-radius:18px;padding:14px 16px;margin:6px 0 4px}
+.preview .lbl{font-family:'Caveat',cursive;font-size:20px;color:var(--teal-dark);line-height:1}
+.preview .q{font-size:18px;font-weight:600;color:#4A4350;line-height:1.35;margin:4px 0 0}
+.ing{color:var(--purple);font-weight:800}
+.ing.now{background:linear-gradient(transparent 62%,rgba(227,154,60,.35) 62%)}
+.ph{color:#B3AAB7;font-style:italic;font-weight:500}
+
+/* nav */
+.nav{display:flex;gap:10px;margin-top:6px;align-items:center}
+.btn{border:none;border-radius:999px;padding:14px 22px;font-size:17px;font-weight:700;line-height:1.1;transition:.15s;display:inline-flex;align-items:center;justify-content:center;gap:8px;text-decoration:none}
+.btn-primary{background:var(--purple);color:#fff;flex:1;box-shadow:0 6px 16px rgba(120,61,127,.25)}
+.btn-primary:hover{background:#6A3470}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-ghost{background:#fff;color:var(--purple);border:1.5px solid var(--line)}
+.btn-ghost:hover{border-color:var(--purple)}
+.btn-teal{background:var(--teal-dark);color:#fff}
+.btn-link{background:none;border:none;color:var(--ink-soft);text-decoration:underline;font-size:15px;padding:8px 4px}
+
+/* checklist */
+.checklist{list-style:none;margin:0;padding:0;display:grid;gap:6px}
+.checklist li{display:flex;gap:10px;align-items:flex-start;font-size:15.5px;padding:6px 10px;border-radius:12px;background:#FAF8FB}
+.checklist .st{flex:none;width:22px;height:22px;border-radius:50%;display:grid;place-items:center;font-size:13px;color:#fff;font-weight:800;margin-top:1px}
+.st.ok{background:var(--green)} .st.warn{background:var(--amber)}
+.wordcount{font-size:14px;color:var(--ink-soft);margin:6px 0 14px;display:flex;justify-content:space-between;gap:8px;flex-wrap:wrap}
+
+/* ideas */
+.idea{border:1.5px solid var(--line);border-radius:16px;padding:12px;margin-bottom:10px;background:#fff}
+.idea-head{display:flex;align-items:center;gap:8px;margin-bottom:8px;font-weight:700;color:var(--purple)}
+.idea-num{width:26px;height:26px;border-radius:50%;background:var(--purple-soft);display:grid;place-items:center;font-size:14px}
+.idea textarea{margin-bottom:8px}
+.variety{display:flex;align-items:center;gap:10px;background:var(--teal-soft);border-radius:14px;padding:10px 14px;margin:4px 0 16px;font-size:15.5px}
+.variety b{color:var(--teal-dark)}
+
+/* diagnosis */
+.verdict{display:inline-flex;align-items:center;gap:8px;border-radius:999px;padding:6px 14px 6px 10px;font-weight:800;font-size:15.5px}
+.verdict .dot{width:12px;height:12px;border-radius:50%}
+.v-solida{background:var(--green-soft);color:#0B7A3B} .v-solida .dot{background:var(--green)}
+.v-ajustes{background:var(--amber-soft);color:#9A6200} .v-ajustes .dot{background:var(--amber)}
+.v-reformular{background:var(--red-soft);color:#B4262B} .v-reformular .dot{background:var(--red)}
+.round-tag{font-size:14px;color:var(--ink-soft);font-weight:600}
+.hero{background:linear-gradient(140deg,#fff 0%,#F7F0F8 60%,#E7F6F8 100%)}
+.hero .blob{position:absolute;right:-50px;top:-50px;width:170px;height:170px;border-radius:50%;background:var(--purple);opacity:.08}
+.arch-name{font-size:31px;line-height:1.05;margin:12px 0 2px}
+.arch-sub{font-family:'Caveat',cursive;font-size:22px;color:var(--orange);margin:0 0 10px;line-height:1.1}
+.quote-q{font-size:17px;color:#4A4350;font-weight:600;background:rgba(255,255,255,.7);border-left:4px solid var(--purple);border-radius:0 12px 12px 0;padding:10px 14px;margin:12px 0}
+.also{display:flex;gap:8px;align-items:flex-start;font-size:15.5px;background:#fff;border:1.5px dashed var(--lilac);border-radius:14px;padding:8px 12px;margin-top:10px}
+.also b{color:var(--purple)}
+.section-title{display:flex;align-items:baseline;gap:10px;margin-bottom:12px}
+.section-title .n{font-family:'Caveat',cursive;font-size:24px;color:var(--orange);line-height:1}
+.strength{display:flex;gap:10px;margin-bottom:8px;font-size:16px}
+.strength .ico{flex:none;width:26px;height:26px;border-radius:50%;background:var(--green-soft);color:var(--green);display:grid;place-items:center;font-weight:800;font-size:14px;margin-top:1px}
+
+.anat-q{font-size:18px;line-height:1.55;font-weight:600;color:#4A4350;margin-bottom:12px}
+.anat-q .u{font-weight:800;color:var(--ink);border-bottom:4px solid;padding-bottom:1px}
+.u-green{border-color:var(--green)!important} .u-amber{border-color:var(--amber)!important} .u-red{border-color:var(--red)!important}
+.anat-rows{display:grid;gap:8px}
+.anat-row{display:grid;grid-template-columns:14px 1fr;gap:10px;align-items:start;font-size:15.5px}
+.anat-row .d{width:14px;height:14px;border-radius:50%;margin-top:5px}
+.d-green{background:var(--green)} .d-amber{background:var(--amber)} .d-red{background:var(--red)}
+.anat-row b{color:var(--ink)}
+
+.dims{display:grid;gap:12px}
+.dim-top{display:flex;justify-content:space-between;gap:10px;font-size:15.5px;margin-bottom:5px}
+.dim-top .nm{font-weight:700}
+.dim-top .lv{color:var(--ink-soft);white-space:nowrap}
+.segs{display:grid;grid-template-columns:repeat(4,1fr);gap:4px}
+.seg{height:10px;border-radius:99px;background:#EEE9F0}
+.legend{font-size:13.5px;color:var(--ink-soft);margin-top:12px}
+
+.thermo{margin:8px 0 4px}
+.thermo-bar{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;position:relative;padding-top:22px}
+.thermo-bar .z{height:14px;border-radius:4px}
+.thermo-bar .z1{background:#F6C9CB;border-radius:99px 4px 4px 99px}
+.thermo-bar .z2{background:#FBE3B6}
+.thermo-bar .z3{background:#BFE8CF}
+.thermo-bar .z4{background:#FBE3B6}
+.thermo-bar .z5{background:#F6C9CB;border-radius:4px 99px 99px 4px}
+.marker{position:absolute;top:0;transform:translateX(-50%);font-size:18px;line-height:1;color:var(--purple-dark)}
+.thermo-labels{display:grid;grid-template-columns:repeat(5,1fr);font-size:12.5px;color:var(--ink-soft);text-align:center;margin-top:6px;line-height:1.15}
+.thermo-labels .on{color:var(--purple-dark);font-weight:800}
+
+.types{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px;margin:6px 0 12px}
+.type{border-radius:12px;padding:8px 4px;text-align:center;font-size:12.5px;overflow-wrap:anywhere;line-height:1.15;background:#F4F1F5;color:#A9A1AD;font-weight:600}
+.type .e{display:block;font-size:20px;margin-bottom:3px;filter:grayscale(1);opacity:.45}
+.type.on{background:var(--teal-soft);color:var(--navy)}
+.type.on .e{filter:none;opacity:1}
+.type .c{display:inline-block;margin-top:3px;background:var(--teal-dark);color:#fff;border-radius:99px;padding:0 6px;font-size:11px}
+.cross{font-size:16px;background:#FAF8FB;border-radius:14px;padding:10px 14px}
+
+.route{display:grid;gap:12px}
+.step{border-radius:18px;padding:16px;border:1.5px solid var(--line);background:#fff;position:relative}
+.step .num{font-family:'Caveat',cursive;font-size:40px;line-height:.8;color:var(--orange);float:left;margin:2px 12px 0 0}
+.step .kicker{font-size:13.5px;font-weight:800;letter-spacing:.04em;text-transform:uppercase;color:var(--teal-dark)}
+.step h3{margin:2px 0 6px}
+.step ol{margin:8px 0 0;padding-left:20px;font-size:15.5px}
+.step ol li{margin-bottom:4px}
+.step .pista{font-size:17px;font-weight:600;color:var(--purple-dark);clear:both;padding-top:6px}
+.step .why{font-size:14px;color:var(--ink-soft);margin-top:8px;font-style:italic}
+.tagline{display:inline-block;font-size:13px;font-weight:700;background:var(--orange-soft);color:#A8650F;border-radius:99px;padding:2px 10px;margin-left:4px;vertical-align:middle}
+.reflect{background:var(--purple);color:#fff}
+.reflect .eyebrow{color:var(--teal)}
+.reflect p.big{font-size:21px;font-weight:700;line-height:1.3;margin:4px 0 0}
+.compare{display:grid;gap:6px;font-size:15.5px}
+.compare-row{padding:7px 12px;border-radius:12px;background:#FAF8FB}
+.compare-row .nm{font-weight:700;display:block}
+.compare-row .vals{font-size:14.5px;color:var(--ink-soft)}
+.up{color:var(--green);font-weight:800} .down{color:var(--red);font-weight:800} .eq{color:var(--ink-soft);font-weight:800}
+
+.dl-grid{display:grid;gap:8px}
+.dl{display:flex;align-items:center;gap:12px;border:1.5px solid var(--line);background:#fff;border-radius:16px;padding:12px 14px;text-align:left;width:100%;transition:.15s}
+.dl:hover{border-color:var(--purple);background:var(--purple-soft)}
+.dl .fmt{flex:none;width:46px;height:46px;border-radius:12px;display:grid;place-items:center;font-weight:800;font-size:13px;color:#fff}
+.dl .t{font-weight:700;line-height:1.2}
+.dl .s{font-size:14px;color:var(--ink-soft);line-height:1.25}
+.send{background:linear-gradient(140deg,#5E1758,#783D7F);color:#fff}
+.send h2{color:#fff}
+.send .lead{color:#EBDDED}
+.send input{background:rgba(255,255,255,.96)}
+.send .send-note{font-size:14px;color:#E2D0E5;margin-top:10px;margin-bottom:0}
+.send-status{margin-top:12px;border-radius:14px;padding:10px 14px;font-size:15.5px;display:none}
+.send-status.show{display:block}
+.send-status.ok{background:#E6F5EC;color:#0B6B33}
+.send-status.bad{background:#FFF1E6;color:#8A4B00}
+.send-status.wait{background:rgba(255,255,255,.15);color:#fff}
+.end-actions{display:flex;gap:10px;flex-wrap:wrap;margin:8px 0 20px}
+.end-actions .btn{flex:1;min-width:200px}
+.toast{position:fixed;left:50%;bottom:22px;transform:translateX(-50%) translateY(30px);background:var(--navy);color:#fff;border-radius:999px;padding:10px 18px;font-size:15px;font-weight:600;opacity:0;transition:.25s;z-index:60;pointer-events:none;max-width:90vw;text-align:center}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* welcome */
+.welcome .blob{position:absolute;left:-60px;bottom:-60px;width:180px;height:180px;border-radius:50%;background:var(--teal);opacity:.7}
+.welcome .inner{position:relative}
+.welcome h1{font-size:36px}
+.steps-mini{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:14px 0 6px}
+.steps-mini div{background:rgba(255,255,255,.85);border:1.5px solid var(--lilac);border-radius:14px;padding:10px;font-size:14px;line-height:1.2}
+.steps-mini b{display:block;font-family:'Caveat',cursive;font-size:22px;color:var(--orange);font-weight:700}
+.resume{background:var(--orange-soft);border-radius:16px;padding:12px 14px;margin-bottom:14px}
+
+/* modals */
+.overlay{position:fixed;inset:0;background:rgba(30,20,40,.45);display:none;align-items:flex-end;justify-content:center;z-index:50;padding:0}
+.overlay.open{display:flex}
+.modal{background:#fff;width:100%;max-width:720px;max-height:92vh;overflow:auto;border-radius:24px 24px 0 0;padding:22px 20px 28px;position:relative}
+.modal h2{padding-right:40px}
+.modal h4{color:var(--purple-dark);margin:16px 0 6px;font-size:17px}
+.modal ol{padding-left:20px;margin:6px 0}
+.modal li{margin-bottom:6px}
+.close{position:absolute;top:14px;right:14px;width:38px;height:38px;border-radius:50%;border:none;background:#F2EEF3;font-size:24px;line-height:1;color:var(--ink-soft)}
+.notes{display:grid;gap:16px;margin:14px 0}
+.note{background:#9E93CE;color:#fff;border-radius:6px;padding:22px 16px 16px;box-shadow:0 8px 18px rgba(60,40,90,.18);position:relative;font-weight:600;line-height:1.3;transform:rotate(-.6deg)}
+.note:nth-child(2){transform:rotate(.6deg)}
+.note::before{content:"";position:absolute;top:-7px;left:50%;width:16px;height:16px;border-radius:50%;background:#1FAE73;transform:translateX(-50%);box-shadow:inset -3px -3px 0 rgba(0,0,0,.12)}
+.note-tag{font-family:'Caveat',cursive;font-size:22px;color:var(--purple);margin-top:6px;display:block}
+.note-ex{font-size:14.5px;color:var(--ink-soft)}
+.round-label{font-weight:700;color:var(--teal-dark)}
+
+/* share card (offscreen, for PNG) */
+#shareCard{position:fixed;left:-3000px;top:0;width:1080px;min-height:1080px;padding:90px 90px 80px;background:linear-gradient(140deg,#fff 0%,#F5EDF6 55%,#E3F4F7 100%);font-family:'Baloo 2',sans-serif;color:#3A3440;overflow:hidden;display:flex;flex-direction:column}
+#shareCard .sc-blob{position:absolute;left:-120px;bottom:-120px;width:420px;height:420px;border-radius:50%;background:#C3EAF0}
+#shareCard .sc-blob2{position:absolute;right:-90px;top:-90px;width:320px;height:320px;border-radius:50%;background:#783D7F;opacity:.09}
+#shareCard .sc-eyebrow{font-family:'Caveat',cursive;font-size:56px;color:#2C9D98;position:relative}
+#shareCard .sc-q{position:relative;font-weight:600;color:#3A3440;margin:24px 0 0;flex:1;line-height:1.28}
+#shareCard .sc-q .ing{color:#783D7F;font-weight:800}
+#shareCard .sc-foot{position:relative;display:flex;justify-content:space-between;align-items:flex-end;margin-top:40px}
+#shareCard .sc-who{font-size:30px;color:#6B6370;font-weight:600;line-height:1.2}
+#shareCard .sc-who b{color:#5E1758;display:block;font-size:34px}
+#shareCard img{height:120px;border-radius:18px;padding:8px 14px;background:#fff}
+
+.print-head{display:none}
+
+@media (min-width:720px){
+  .app{padding:20px 24px 72px}
+  .card{padding:28px 30px}
+  h1{font-size:36px}
+  .welcome h1{font-size:44px}
+  .arch-name{font-size:38px}
+  .types{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .overlay{align-items:center;padding:24px}
+  .modal{border-radius:24px;padding:28px 30px 30px}
+  .notes{grid-template-columns:repeat(3,1fr)}
+  .route{grid-template-columns:1fr}
+  .dl-grid{grid-template-columns:1fr 1fr}
+}
+@media (min-width:1000px){ .deco{display:block} }
+@media (max-width:380px){
+  h1{font-size:27px} .arch-name{font-size:27px} .steps-mini{grid-template-columns:1fr}
+  .thermo-labels{font-size:11px}
+}
+
+@media print{
+  @page{margin:14mm}
+  *{-webkit-print-color-adjust:exact;print-color-adjust:exact}
+  body{background:#fff;font-size:12.5pt}
+  .deco,.topbar,.progress,.no-print,.overlay,.toast{display:none!important}
+  .app{max-width:none;padding:0}
+  .card{box-shadow:none;border:1px solid #E6E0E8;break-inside:avoid;page-break-inside:avoid;margin-bottom:10px;padding:16px 18px}
+  .print-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px}
+  .print-head img{height:42px}
+  .reflect{background:#F3ECF4!important;color:var(--purple-dark)!important}
+  .reflect p.big{color:var(--purple-dark)}
+  .reflect .eyebrow{color:var(--teal-dark)}
+  .step{break-inside:avoid}
+}
+</style>
+</head>
+<body>
+<svg class="deco" viewBox="0 0 260 260" aria-hidden="true"><path d="M0,260 L0,80 A180,180 0 0,1 180,260 Z" fill="#C3EAF0"/></svg>
+
+<div class="app" id="app">
+  <header class="topbar">
+    <div class="brand"><img src="data:image/png;base64,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" alt="DotX · Conexión en cada punto"><span>Pregunta mágica</span></div>
+    <div class="tools">
+      <button class="icon-btn" id="helpBtn" type="button" aria-label="¿Qué es la pregunta mágica?">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><circle cx="12" cy="12" r="10" stroke="currentColor" stroke-width="2"/><path d="M9.3 9.3c.2-.9 1-1.6 2-1.8 1.1-.2 2.2.3 2.6 1.3.4 1-.1 1.8-.9 2.4-.7.5-1.2.9-1.2 1.9" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><circle cx="12" cy="16.6" r="1.05" fill="currentColor"/></svg>
+      </button>
+      <button class="icon-btn" id="examplesBtn" type="button" aria-label="Ver ejemplos">
+        <svg viewBox="0 0 24 24" width="20" height="20" fill="none"><rect x="3.5" y="3.5" width="8" height="8" rx="1.6" stroke="currentColor" stroke-width="1.8"/><rect x="12.5" y="12.5" width="8" height="8" rx="1.6" stroke="currentColor" stroke-width="1.8"/><path d="M13 6.5h5.5a1 1 0 0 1 1 1V13M11 17.5H5.5a1 1 0 0 1-1-1V11" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/></svg>
+      </button>
+    </div>
+  </header>
+  <div class="progress" id="progress"></div>
+  <main id="main"></main>
+</div>
+
+<!-- Ayuda -->
+<div class="overlay" id="helpOverlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="helpTitle">
+    <button class="close" data-close type="button" aria-label="Cerrar">&times;</button>
+    <p class="eyebrow">Para tener a mano</p>
+    <h2 id="helpTitle">¿Qué es la pregunta mágica?</h2>
+    <p>Técnica de innovación que plantea que cada problema es una oportunidad para el diseño.</p>
+    <p>Enmarca los desafíos y puntos de vista transformándolos con la pregunta <strong>"¿Cómo podríamos...?"</strong>, que sugiere plantear al menos una solución posible y ofrece la posibilidad de responderla de varias maneras.</p>
+    <p>Ofrece el marco perfecto para el pensamiento innovador.</p>
+    <h4>La idea central</h4>
+    <p>Una pregunta mágica no busca la solución directamente: busca abrir un espacio de posibilidades. Por eso siempre arranca con <strong>"¿Cómo podríamos...?"</strong>: ese "podríamos" invita a explorar varias respuestas en equipo, en lugar de quedarnos con la primera idea.</p>
+    <h4>Los 5 ingredientes</h4>
+    <ol>
+      <li><strong>Verbo de acción</strong> — qué queremos lograr (ayudar, facilitar, reducir, mejorar...).</li>
+      <li><strong>Persona</strong> — para quién es esto, lo más específico posible (nuestros pasajeros, el equipo de soporte, los nuevos usuarios).</li>
+      <li><strong>Meta / deseo / necesidad</strong> — qué resultado busca esa persona, no la solución en sí.</li>
+      <li><strong>Resultado esperado</strong> — qué logra concretamente al conseguirlo.</li>
+      <li><strong>Sensación que debe perdurar</strong> — cómo queremos que se sienta la persona después (más segura, más tranquila, más conectada).</li>
+    </ol>
+    <h4>La anatomía completa</h4>
+    <div class="preview"><p class="q">¿Cómo podríamos <span class="ing">(verbo)</span> a <span class="ing">(persona)</span> a <span class="ing">(meta / deseo / necesidad)</span> de manera que pueda <span class="ing">(resultado esperado)</span> sintiéndose <span class="ing">(sensación que queremos que perdure)</span>?</p></div>
+    <p class="small muted" style="margin-top:10px">Ejemplo: ¿Cómo podríamos <b>ayudar</b> a los <b>pasajeros con un vuelo retrasado</b> a <b>entender qué está pasando y qué opciones tienen</b>, de manera que puedan <b>reorganizar su plan</b> sintiéndose <b>informados y en control</b>?</p>
+  </div>
+</div>
+
+<!-- Ejemplos -->
+<div class="overlay" id="examplesOverlay" aria-hidden="true">
+  <div class="modal" role="dialog" aria-modal="true" aria-labelledby="exTitle">
+    <button class="close" data-close type="button" aria-label="Cerrar">&times;</button>
+    <h2 id="exTitle">Ejemplos de pregunta mágica</h2>
+    <p class="muted">Así se ve cuando el alcance está mal calibrado — y cuando está en el punto justo.</p>
+    <div class="round-label" id="exRound"></div>
+    <div class="notes" id="exNotes"></div>
+    <p class="small muted"><b>Regla práctica:</b> si la pregunta ya menciona un objeto o una solución específica, es muy estrecha; si serviría para cualquier negocio, es muy amplia.</p>
+    <button class="btn btn-ghost" id="exNext" type="button">↻ Ver otro ejemplo</button>
+  </div>
+</div>
+
+<div id="shareCard" aria-hidden="true">
+  <div class="sc-blob"></div><div class="sc-blob2"></div>
+  <div class="sc-eyebrow">Nuestra pregunta mágica</div>
+  <div class="sc-q" id="scQ"></div>
+  <div class="sc-foot"><div class="sc-who" id="scWho"></div><img src="data:image/png;base64,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" alt=""></div>
+</div>
+
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js" defer></script>
+<script>
+/* =====================================================================
+   CONFIGURACIÓN DEL ENVÍO A DOTX
+   Pega aquí la URL de la aplicación web de Google Apps Script (termina
+   en /exec). Mientras esté vacía, el botón "Enviar a DotX" explica que el
+   envío no está activo y ofrece descargar el archivo .md.
+   ===================================================================== */
+const CONFIG = {
+  SCRIPT_URL: '',
+  PEDIR_CODIGO: true,
+  VERSION: '2.1'
+};
+</script>
+<script>
+(function(){
+'use strict';
+
+/* ---------------- utilidades ---------------- */
+const $ = (s, r=document) => r.querySelector(s);
+const $$ = (s, r=document) => Array.from(r.querySelectorAll(s));
+const esc = s => String(s ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const nfc = s => String(s || '').normalize('NFC');
+const norm = s => nfc(s).toLowerCase().normalize('NFD').replace(/[̀-ͯ]/g, '');
+const words = s => String(s || '').trim().split(/\s+/).filter(Boolean).length;
+const Q = s => '«' + s + '»';
+function hash(s){ let h = 5381; const t = norm(s); for (let i=0;i<t.length;i++) h = ((h<<5) + h + t.charCodeAt(i)) >>> 0; return h; }
+function store(k, v){ try { localStorage.setItem(k, JSON.stringify(v)); } catch(e){} }
+function load(k, d){ try { const v = localStorage.getItem(k); return v ? JSON.parse(v) : d; } catch(e){ return d; } }
+function toast(msg){ const t = $('#toast'); t.textContent = msg; t.classList.add('show'); clearTimeout(toast._t); toast._t = setTimeout(()=>t.classList.remove('show'), 2400); }
+function listJoin(a){ if (a.length <= 1) return a.join(''); return a.slice(0,-1).join(', ') + ' y ' + a[a.length-1]; }
+function today(){ const d = new Date(); const p = n => String(n).padStart(2,'0'); return d.getFullYear()+'-'+p(d.getMonth()+1)+'-'+p(d.getDate()); }
+function humanDate(){ try { return new Date().toLocaleDateString('es-CO',{day:'numeric',month:'long',year:'numeric'}); } catch(e){ return today(); } }
+
+/* búsqueda de términos sobre texto normalizado, devolviendo el fragmento original */
+function findTerms(text, frags){
+  const orig = nfc(text), n = norm(text), out = [], taken = [];
+  frags.forEach(f => {
+    const re = new RegExp('(^|[^a-z0-9])(' + f + ')(?![a-z0-9])', 'g');
+    let m;
+    while ((m = re.exec(n))){
+      const start = m.index + m[1].length, end = start + m[2].length;
+      if (!taken.some(([a,b]) => start < b && end > a)) { taken.push([start,end]); out.push({ term: orig.slice(start,end), idx: start }); }
+      if (re.lastIndex === m.index) re.lastIndex++;
+    }
+  });
+  return out.sort((a,b)=>a.idx-b.idx);
+}
+const hasTerm = (text, frags) => findTerms(text, frags).length > 0;
+
+/* ---------------- léxicos ---------------- */
+const LEX = {
+  sol: ['codigos? qr','inteligencia artificial','modelos? de gobierno','pagina web','sitio web','power ?bi','chat ?gpt','correos? masivos?','apps?','aplicacion(es)?','plataformas?','chatbots?','bots?','ia','copilot','tableros?','dashboards?','excel','formularios?','portal(es)?','boton(es)?','qr','notificacion(es)?','alertas?','newsletters?','capacitacion(es)?','cursos?','talleres?','manual(es)?','guias?','documentacion','okrs?','comites?','protocolos?','canal(es)?','sistemas?','herramientas?','software','automatizacion(es)?','encuestas?','web','whatsapp'],
+  biz: ['uso de nuestros productos','generar valor','eficiencia operativa','cumplir (con )?(los |las |sus |nuestros |nuestras )?(indicadores|metas|objetivos)','ventas','kpis?','rentabilidad','costos?','productividad','ingresos','conversion','nps','utilidades','margen'],
+  serv: ['agil(es)?','eficientes?','oportun[oa]s?','optim[oa]s?','rapid[oa]s?','efectiv[oa]s?','productiv[oa]s?','puntual(es)?','ordenad[oa]s?','organizad[oa]s?','actualizad[oa]s?','competitiv[oa]s?','rentables?','agilizad[oa]s?'],
+  gen: ['a gusto','bien','mejor','positiv[oa]s?','normal(es)?','chevere','bacan[oa]s?'],
+  neg: ['sin que','sin tener','dejar de','dejen de','sin','evitando','evitar','prevenir','previniendo','no','nunca'],
+  entity: ['area','areas','proceso','procesos','sistema','sistemas','empresa','empresas','banco','organizacion','negocio','negocios','operacion','operaciones','compania','gerencia','vicepresidencia','direccion','departamento'],
+  generic: ['todos','todas','gente','personas','clientes','usuarios','colaboradores','empleados','ciudadanos','consumidores'],
+  vSol: ['implementar','crear','desarrollar','construir','instalar','automatizar','digitalizar','lanzar','poner','agregar','montar','desplegar','disenar'],
+  vGen: ['mejorar','optimizar','hacer','lograr','gestionar','fortalecer','potenciar','impulsar','aumentar','incrementar'],
+  vHum: ['ayudar','acompanar','motivar','animar','invitar','inspirar','preparar','ensenar','guiar','impulsar','orientar','alentar','incentivar','estimular','apoyar','entrenar','capacitar','retar','desafiar','acostumbrar','llevar','conducir','convocar','empujar','persuadir','educar'],
+  vSug: ['ayudar','acompañar','motivar','animar','invitar','inspirar','preparar','enseñar','guiar','impulsar'],
+  notInf: ['lugar','hogar','mujer','placer','taller','bienestar','azucar','altar','militar','familiar','particular','popular','regular','similar','titular','auxiliar','escolar','celular','singular','mar','par','bar','collar','pilar','alfiler','alquiler','cancer','carácter','caracter','sur','elixir','faquir','nadir','emir','zafir','tapir','yogur','mayor']
+};
+/* Catálogo de emociones (Plutchik, Bisquerra · Universo de emociones, Willcox · Feeling Wheel, Ginebra · GEW).
+   Cada palabra se escribe en masculino singular; frag() genera femenino y plural. */
+function frag(w){
+  const parts = norm(w).replace(/[.*+?^${}()|[\]\\]/g,'\\$&').split(' ');
+  let f = parts[0];
+  if (f.length > 2){
+    if (/o$/.test(f)) f = f.slice(0,-1) + '[oa]s?';
+    else if (/z$/.test(f)) f = f.slice(0,-1) + '(z|ces)';
+    else if (/[ae]$/.test(f)) f = f + 's?';
+    else if (/[lrnd]$/.test(f)) f = f + '(es)?';
+  }
+  return [f].concat(parts.slice(1)).join(' ');
+}
+const EMO = {
+  E1:{n:'Seguridad y confianza', c:'#1E2A5E', w:'seguro confiado informado preparado respaldado protegido resguardado amparado prevenido firme estable|en control|con control|con certeza|con claridad|orientado|a salvo|en confianza|con confianza|cubierto|tranquilo de que|sin miedo'},
+  E2:{n:'Capacidad y autonomía', c:'#E39A3C', w:'capaz autónomo competente independiente empoderado hábil poderoso fuerte valiente decidido determinado resuelto libre autosuficiente capacitado creativo recursivo audaz osado exitoso eficaz|seguro de sí|dueño de|protagonista|con iniciativa|con agencia|en capacidad|al mando'},
+  E3:{n:'Pertenencia y conexión', c:'#2C9D98', w:'escuchado incluido acompañado conectado corresponsable cercano acogido integrado unido comprendido entendido querido amado cuidado respetado bienvenido aceptado apoyado vinculado solidario empático cómplice comprometido involucrado considerado atendido visto hermanado arropado|parte de|tenido en cuenta|en comunidad|en familia|en equipo|tomado en cuenta'},
+  E4:{n:'Calma y alivio', c:'#4FA9C4', w:'tranquilo calmado aliviado sereno ligero descansado relajado cómodo apacible sosegado liberado despreocupado equilibrado centrado paciente reconfortado confortable plácido|en calma|en paz|en armonía|en equilibrio|sin prisa|sin afán'},
+  E5:{n:'Reconocimiento y sentido', c:'#783D7F', w:'valorado reconocido orgulloso útil motivado inspirado realizado apreciado importante digno admirado satisfecho pleno valioso honrado agradecido significativo gratificado reivindicado homenajeado|con propósito|con sentido|tomado en serio'},
+  E6:{n:'Alegría y disfrute', c:'#D99A00', w:'contento feliz alegre gozoso entusiasmado emocionado extasiado eufórico encantado divertido animado optimista esperanzado ilusionado radiante dichoso jubiloso entretenido enérgico vital apasionado enamorado deleitado complacido afortunado juguetón|disfrutando|gozando|con energía|con ganas|con entusiasmo|de buen ánimo|de buen humor'},
+  E7:{n:'Curiosidad y asombro', c:'#5A7BD8', w:'curioso interesado intrigado asombrado sorprendido maravillado fascinado expectante atento despierto abierto cautivado absorto inmerso enfocado explorador inquisitivo|con curiosidad|con asombro'}
+};
+const FAM = {};
+Object.entries(EMO).forEach(([k,E]) => { FAM[k] = {n:E.n, c:E.c, f: E.w.split('|').flatMap((g,i)=> i===0 ? g.split(' ') : [g]).filter(Boolean).map(frag)}; });
+const FAM_EXTRA = {E0:'Sin emoción clara', EX:'Emoción propia', EN:'Emoción por dejar atrás'};
+const famName = k => FAM[k] ? FAM[k].n : FAM_EXTRA[k] || k;
+/* emociones de valencia negativa: si aparecen en la sensación, se pregunta qué queremos que se quede */
+const EMO_NEG = ('triste ansioso estresado frustrado angustiado preocupado asustado temeroso nervioso inseguro confundido perdido abrumado agobiado culpable avergonzado solo aburrido enojado molesto irritado rabioso indignado decepcionado desmotivado cansado agotado impotente excluido ignorado rechazado juzgado vulnerable desconfiado celoso envidioso resentido desesperado humillado apenado tenso presionado saturado aterrado aterrorizado horrorizado furioso deprimido desanimado desilusionado melancólico solitario aislado abandonado traicionado amenazado intimidado inferior inútil débil fracasado vacío apático indiferente desconcertado perplejo escéptico hostil asqueado harto fastidiado incómodo apurado ahogado desbordado bloqueado paralizado inquieto receloso tímido menospreciado ridiculizado acorralado afligido dolido herido amargado disgustado desorientado desprotegido estancado').split(' ').map(frag);
+
+const TYPES = [
+  {g:'Lo que se ofrece', items:[['producto','Producto u oferta','🎁'],['servicio','Servicio o acompañamiento','🙋'],['incentivo','Incentivo, precio o reconocimiento','🏅']]},
+  {g:'Cómo se hace', items:[['herramienta','Herramienta o tecnología','🛠️'],['proceso','Proceso o regla','🔁'],['organizacion','Organización y roles','🧩'],['alianza','Alianza o tercero','🤝']]},
+  {g:'Cómo se vive', items:[['canal','Canal o espacio','🚪'],['informacion','Información y comunicación','📣'],['aprendizaje','Aprendizaje o formación','📚'],['comunidad','Comunidad y participación','👥']]},
+  {g:'Ninguna encaja', items:[['otro','Otro','✳️']]}
+];
+const TYPE = {}; TYPES.forEach(g => g.items.forEach(([k,n,e]) => TYPE[k] = {n, e, g:g.g}));
+const TYPE_SHORT = {producto:'Producto',servicio:'Servicio',incentivo:'Incentivo',herramienta:'Herramienta',proceso:'Proceso',organizacion:'Organización',alianza:'Alianza',canal:'Canal',informacion:'Información',aprendizaje:'Aprendizaje',comunidad:'Comunidad',otro:'Otro'};
+
+const ING_LABEL = {verbo:'el verbo', persona:'la persona', meta:'la necesidad', resultado:'el resultado esperado', sensacion:'la sensación'};
+const ING_NAME = {verbo:'Verbo', persona:'Persona', meta:'Necesidad', resultado:'Resultado esperado', sensacion:'Sensación'};
+const DIM = {
+  D1:{n:'Estructura y sintaxis', w:.15}, D2:{n:'Anclaje en necesidad real', w:.25}, D3:{n:'Apertura al diseño', w:.25},
+  D4:{n:'Alcance óptimo', w:.15}, D5:{n:'Centrada en la persona', w:.12}, D6:{n:'Claridad y comprensión', w:.08}
+};
+const DIM_ORDER = ['D2','D3','D1','D4','D5','D6'];
+const LEVEL = {4:'Ejemplar',3:'Lograda',2:'En construcción',1:'Por reformular'};
+const LEVEL_COLOR = {4:'#12A150',3:'#7BC59A',2:'#F5A524',1:'#E5484D'};
+const VERDICT = {
+  solida:{n:'Pregunta sólida', e:'🟢', c:'v-solida'},
+  ajustes:{n:'Necesita ajustes', e:'🟡', c:'v-ajustes'},
+  validar:{n:'Bien construida, por validar', e:'🟡', c:'v-ajustes'},
+  reformular:{n:'Reformular', e:'🔴', c:'v-reformular'}
+};
+const ARCH = {
+  A7:{n:'La pregunta en obra negra', s:'En borrador'},
+  A8:{n:'La puerta abierta', s:'Lista para idear'},
+  A1:{n:'La pregunta spoiler', s:'Trae la respuesta adentro'},
+  A2:{n:'La pregunta de comité', s:'Habla el negocio'},
+  A3:{n:'La pregunta océano', s:'Horizonte demasiado amplio'},
+  A6:{n:'La pregunta con dos dueños', s:'Protagonista difuso'},
+  A4:{n:'La pregunta sin pulso', s:'Sin emoción'},
+  A5:{n:'La pregunta en contravía', s:'En negativo'},
+  A9:{n:'La pregunta a punto', s:'Casi lista'}
+};
+const ROL_FRENTE = {lidero:'Liderazgo', equipo:'Innovación desde adentro', personal:'Creatividad personal'};
+
+/* ---------------- estado ---------------- */
+const BLANK = () => ({
+  nombre:'', correo:'', grupo:'', rol:'',
+  reto:'', aQuien:'', dolor:'', evidencia:'', ambito:'',
+  persona:'', meta:'', resultado:'', sensacion:'', verbo:'',
+  textoManual:'', editadaManual:false,
+  universalidad:'', ideaFavorita:'',
+  ideas:[0,1,2,3,4].map(()=>({t:'', tipo:''})), ideasSaltadas:false,
+  descartadas:[], step:0, lastStep:1, ronda:1
+});
+let st = Object.assign(BLANK(), load('pm2.state', {}));
+let history = load('pm2.history', []);
+let exRound = 0;
+const save = () => store('pm2.state', st);
+
+/* ---------------- limpieza y armado ---------------- */
+function cleaned(s){
+  const t = v => String(v||'').replace(/\s+/g,' ').trim().replace(/[?¿.;,:]+$/,'').trim();
+  return {
+    verbo: t(s.verbo).replace(/^¿?\s*c[oó]mo\s+podr[ií]amos\s+/i,''),
+    persona: t(s.persona).replace(/^a\s+/i,''),
+    meta: t(s.meta).replace(/^a\s+/i,''),
+    resultado: t(s.resultado).replace(/^(de manera que|de modo que|para que)\s+(puedan?\s+)?/i,''),
+    sensacion: t(s.sensacion).replace(/^sinti[eé]ndose\s+/i,'')
+  };
+}
+function pluralPersona(p){
+  const n = norm(p).trim(); if (!n) return false;
+  if (/^(los|las|nuestros|nuestras|unos|unas|sus|mis|tus|todos|todas|varios|varias|muchos|muchas|algunos|algunas)\b/.test(n)) return true;
+  if (/^(el|la|un|una|mi|tu|su|nuestro|nuestra|cada|este|esta|ese|esa|aquel|aquella|la gente|gente)\b/.test(n)) return false;
+  return /s$/.test(n.split(/\s+/)[0]);
+}
+function startsInf(t){
+  let w = norm(t).trim().split(/\s+/)[0] || ''; w = w.replace(/[^a-z]/g,'');
+  if (!w) return true;
+  if (w === 'que') return true;
+  if (LEX.notInf.includes(w)) return false;
+  return /(ar|er|ir)(se|le|les|lo|la|los|las|nos|me|te)?(lo|la|los|las)?$/.test(w);
+}
+function assemble(s, mode, hl){
+  const c = cleaned(s);
+  const slot = (k, ph) => {
+    if (c[k]) return mode === 'text' ? c[k] : `<span class="ing${hl===k?' now':''}">${esc(c[k])}</span>`;
+    return mode === 'text' ? '…' : `<span class="ph${hl===k?' ing now':''}">(${ph})</span>`;
+  };
+  const pueda = pluralPersona(c.persona) ? 'puedan' : 'pueda';
+  return `¿Cómo podríamos ${slot('verbo','verbo')} a ${slot('persona','persona')} a ${slot('meta','meta / deseo / necesidad')}, de manera que ${pueda} ${slot('resultado','resultado esperado')}, sintiéndose ${slot('sensacion','sensación')}?`;
+}
+const finalText = s => s.editadaManual && s.textoManual.trim() ? s.textoManual.trim() : assemble(s,'text');
+
+/* ---------------- motor de análisis ---------------- */
+function analyze(s){
+  const c = cleaned(s), txt = finalText(s), nt = norm(txt);
+  const dis = new Set(s.descartadas);
+  const sig = {}; // id -> [{term, field, key, dismissable}]
+  const add = (id, term, field, dismissable) => {
+    const key = id + ':' + norm(term || field || id);
+    (sig[id] = sig[id] || []).push({term, field, key, dismissable: !!dismissable, off: dismissable && dis.has(key)});
+  };
+  const on = id => (sig[id] || []).filter(x => !x.off);
+  const has = id => on(id).length > 0;
+
+  // S3 vacíos
+  ['verbo','persona','meta','resultado','sensacion'].forEach(k => { if (!c[k]) add('S3', '', k, false); });
+  // S1 / S2
+  if (/^\s*¿?\s*como\s+podria(\s|$)/.test(nt)) add('S1','','texto',false);
+  else if (!/^\s*¿?\s*como\s+podriamos\b/.test(nt) || !/\?\s*$/.test(txt)) add('S2','','texto',false);
+  // verbo
+  let vcls = '';
+  if (c.verbo){
+    let v = norm(c.verbo).split(/\s+/)[0].replace(/[^a-z]/g,'');
+    const base = v.replace(/(les|le|los|las|nos|lo|la)$/,'');
+    if (/(ar|er|ir)$/.test(base)) v = base;
+    if (LEX.vSol.includes(v)) { vcls='sol'; add('S4', c.verbo.split(/\s+/)[0], 'verbo', true); }
+    else if (LEX.vGen.includes(v)) { vcls='gen'; add('S4b', c.verbo.split(/\s+/)[0], 'verbo', false); }
+    else if (LEX.vHum.includes(v)) { vcls='hum'; add('S4c', c.verbo.split(/\s+/)[0], 'verbo', false); }
+    if (vcls !== 'sol' && !LEX.vHum.includes(v)) add('S23', c.verbo.split(/\s+/)[0], 'verbo', true);
+  }
+  // S22 necesidad y resultado deben empezar con un verbo
+  if (c.meta && !startsInf(c.meta)) add('S22', c.meta.split(/\s+/).slice(0,3).join(' '), 'meta', true);
+  if (c.resultado && (!startsInf(c.resultado) || /^que\b/i.test(c.resultado))) add('S22', c.resultado.split(/\s+/).slice(0,3).join(' '), 'resultado', true);
+  // S5 solución nombrada
+  const seen = new Set();
+  const scan5 = (text, field) => findTerms(text, LEX.sol).forEach(m => { const k = norm(m.term); if (!seen.has(k)) { seen.add(k); add('S5', m.term, field, true); } });
+  ['verbo','persona','meta','resultado','sensacion'].forEach(k => scan5(c[k], k));
+  if (s.editadaManual) scan5(txt, 'texto');
+  (sig.S5||[]).forEach(x => { x.inReto = hasTerm(s.reto, [norm(x.term).replace(/[.*+?^${}()|[\]\\]/g,'\\$&')]); });
+  // S6 voz del negocio
+  ['meta','resultado'].forEach(k => findTerms(c[k], LEX.biz).forEach(m => add('S6', m.term, k, true)));
+  // S7, S8, S9, S10
+  findTerms(c.sensacion, LEX.serv).forEach(m => add('S7', m.term, 'sensacion', false));
+  findTerms(c.sensacion, LEX.gen).forEach(m => add('S8', m.term, 'sensacion', false));
+  const emoCount = c.sensacion ? norm(c.sensacion).split(/,|\by\b|\be\b/).map(x=>x.trim()).filter(Boolean).length : 0;
+  if (emoCount > 2) add('S9', String(emoCount), 'sensacion', false);
+  ['resultado','sensacion'].forEach(k => findTerms(c[k], LEX.neg).forEach(m => add('S10', m.term, k, false)));
+  // persona
+  if (c.persona){
+    const np = norm(c.persona);
+    if (/\s(y|e)\s|\/|,|\basi como\b/.test(np)) add('S11', c.persona, 'persona', true);
+    const head = np.replace(/^(el|la|los|las|nuestro|nuestra|nuestros|nuestras|del|de)\s+/,'').split(/\s+/)[0];
+    if (LEX.entity.includes(head)) add('S12', c.persona.replace(/^(el|la|los|las|nuestro|nuestra|nuestros|nuestras)\s+/i,'').split(/\s+/)[0], 'persona', true);
+    const stripped = np.replace(/^(a\s+)?(todos\s+)?(el|la|los|las|nuestros|nuestras|sus|mis)\s+/,'').trim();
+    if (words(c.persona) <= 2 && LEX.generic.includes(stripped)) add('S13', c.persona, 'persona', true);
+  }
+  // S14 longitud, S15 siglas
+  const nw = words(txt);
+  if (nw < 15) add('S14', 'corta', 'texto', false); else if (nw > 45) add('S14', 'larga', 'texto', false);
+  const sigRe = /(^|[^A-Za-zÁÉÍÓÚÑáéíóúñ])([A-ZÁÉÍÓÚÑ]{2,6})(?![A-Za-zÁÉÍÓÚÑáéíóúñ])/g; let sm; const sigSeen = new Set();
+  while ((sm = sigRe.exec(nfc(txt)))) { if (!sigSeen.has(sm[2])) { sigSeen.add(sm[2]); add('S15', sm[2], 'texto', true); } }
+  // contexto
+  if (words(s.aQuien) + words(s.dolor) < 8) add('S19', '', 'contexto', false);
+  if (c.persona && s.aQuien.trim()){
+    const stop = new Set('a al el la los las un una unos unas de del y e o en con por para que se su sus mi mis nuestro nuestra nuestros nuestras este esta estos estas ese esa como mas muy'.split(' '));
+    const toks = t => norm(t).split(/[^a-z0-9]+/).filter(w => w.length > 3 && !stop.has(w)).map(w => w.slice(0,5));
+    const a = new Set(toks(s.aQuien)), b = toks(c.persona);
+    if (b.length && !b.some(w => a.has(w))) add('S20', s.aQuien.trim(), 'persona', true);
+  }
+  // familia emocional
+  let fam = 'E0', fam2 = '';
+  const famHits = [], spans = [];
+  Object.entries(FAM).forEach(([k, F]) => { const m = findTerms(c.sensacion, F.f); m.forEach(x => spans.push([x.idx, x.idx + x.term.length])); if (m.length) famHits.push([k, m[0].idx, Math.max(...m.map(x=>x.term.length))]); });
+  famHits.sort((a,b)=> a[1]-b[1] || b[2]-a[2]);
+  const negE = findTerms(c.sensacion, EMO_NEG);
+  negE.forEach(m => { spans.push([m.idx, m.idx + m.term.length]); add('S21', m.term, 'sensacion', false); });
+  [LEX.serv, LEX.gen, LEX.neg].forEach(L => findTerms(c.sensacion, L).forEach(x => spans.push([x.idx, x.idx + x.term.length])));
+  if (famHits.length){ fam = famHits[0][0]; fam2 = famHits[1] ? famHits[1][0] : ''; }
+  else if (c.sensacion){
+    let rest = norm(c.sensacion).split(''); spans.forEach(([a,b]) => { for (let i=a;i<b;i++) rest[i] = ' '; });
+    const STOP = new Set('sintiendose sentirse mucho mucha muchos muchas muy mas menos tan bastante realmente completamente totalmente siempre cada todo toda todos todas mismo misma mismos mismas como para porque desde hacia entre sobre tambien ademas nada algo poco poca pocos pocas cosa cosas parte'.split(' '));
+    const left = rest.join('').split(/[^a-z]+/).filter(w => w.length >= 4 && !STOP.has(w));
+    fam = negE.length ? 'EN' : left.length ? 'EX' : 'E0';
+  }
+  // S24 concordancia de número entre persona y emoción
+  if (c.persona && c.sensacion){
+    const first = findTerms(c.sensacion, [].concat(...Object.values(FAM).map(F=>F.f), EMO_NEG, LEX.serv)).find(m => !/\s/.test(m.term) && /[oa]s?$|es$/.test(norm(m.term)));
+    if (first){ const pl = /s$/.test(norm(first.term)); const pp = pluralPersona(c.persona); if (pl !== pp) add('S24', first.term, 'sensacion', true); }
+  }
+
+  // ideas
+  const ideas = s.ideas.filter(i => i.t.trim());
+  const typed = ideas.filter(i => i.tipo);
+  const ideasDone = !s.ideasSaltadas && s.ideas.every(i => i.t.trim() && i.tipo);
+  const tcount = {}; typed.forEach(i => tcount[i.tipo] = (tcount[i.tipo]||0) + 1);
+  const nTypes = Object.keys(tcount).length;
+  const variedad = !ideasDone ? 'nd' : nTypes <= 2 ? 'baja' : nTypes === 3 ? 'media' : 'alta';
+  let dominante = ''; Object.entries(tcount).forEach(([k,v]) => { if (v >= 3) dominante = k; });
+  const s5on = on('S5');
+  let eco = false, ecoN = 0;
+  if (ideasDone && s5on.length){
+    const frags = s5on.map(x => norm(x.term).replace(/[.*+?^${}()|[\]\\]/g,'\\$&'));
+    ecoN = ideas.filter(i => hasTerm(i.t, frags)).length;
+    if (ecoN >= 2 || (tcount.herramienta||0) >= 3) eco = true;
+  }
+
+  // ---- niveles ----
+  const clamp = v => Math.max(1, Math.min(4, v));
+  const vacios = (sig.S3||[]).length;
+  // D1
+  let D1 = vacios >= 3 ? 1 : clamp(4 - vacios - ((sig.S1||sig.S2) ? 1 : 0));
+  // D2
+  let D2 = {ninguna:2, una:3, dos:4, vivo:4}[s.evidencia] || 3;
+  if (sig.S19) D2 = Math.min(D2, 3);
+  if (has('S6')) D2 = Math.min(D2, 2);
+  if (has('S13')) D2 -= 1;
+  if (has('S20')) D2 -= 1;
+  D2 = clamp(D2);
+  // D3
+  let D3 = 4;
+  if (has('S4')) D3 -= 1;
+  if (has('S5')) D3 = (eco || has('S4')) ? 1 : Math.min(D3, 2);
+  if (variedad === 'baja') D3 = Math.min(D3, 2);
+  if (variedad === 'media') D3 = Math.min(D3, 3);
+  if (s.ideaFavorita === 'si') D3 -= 1;
+  if (!ideasDone) D3 = Math.min(D3, 3);
+  D3 = clamp(D3);
+  // D4 + termómetro
+  const amplitud = ({si:2, mas:1}[s.universalidad] || 0) + (has('S13') ? 1 : 0) + (vcls === 'gen' ? 1 : 0);
+  const estrechez = (has('S5') ? 2 : 0) + (has('S4') ? 1 : 0) + (variedad === 'baja' ? 1 : 0);
+  const bal = estrechez - amplitud;
+  let termo, D4;
+  if (amplitud >= 2 && estrechez >= 2){ termo = 'desenfocada'; D4 = 2; }
+  else if (bal <= -3){ termo = 'muy_amplia'; D4 = amplitud >= 4 ? 1 : 2; }
+  else if (bal <= -1){ termo = 'amplia'; D4 = 3; }
+  else if (bal === 0){ termo = 'justa'; D4 = 4; }
+  else if (bal <= 2){ termo = 'estrecha'; D4 = 3; }
+  else { termo = 'muy_estrecha'; D4 = estrechez >= 4 ? 1 : 2; }
+  // D5
+  let D5 = 4;
+  if (has('S12')) D5 = has('S6') ? 1 : Math.min(D5, 2);
+  if (has('S11')) D5 -= 1;
+  if (has('S13')) D5 -= 1;
+  if (!c.sensacion || fam === 'E0' || fam === 'EN') D5 = Math.min(D5, 2);
+  if (sig.S8 && fam !== 'E0') D5 -= 1;
+  if (sig.S9) D5 -= 1;
+  if ((sig.S10||[]).some(x => x.field === 'sensacion')) D5 -= 1;
+  D5 = clamp(D5);
+  // D6
+  let D6 = 4;
+  if (has('S15')) D6 -= 1;
+  if (nw > 60) D6 -= 2; else if (nw > 45) D6 -= 1;
+  const largo = ['verbo','persona','meta','resultado','sensacion'].find(k => words(c[k]) > 15);
+  if (largo) D6 -= 1;
+  if (has('S22')) D6 -= 1;
+  if (has('S23')) D6 -= 1;
+  D6 = clamp(D6);
+
+  const L = {D1, D2, D3, D4, D5, D6};
+  const score = Math.round((D1*.15 + D2*.25 + D3*.25 + D4*.15 + D5*.12 + D6*.08) * 100) / 100;
+  const ones = Object.values(L).filter(v => v === 1).length;
+  let verdict = (score < 2.5 || ones >= 2) ? 'reformular' : (score >= 3.5 && Object.values(L).every(v => v >= 3)) ? 'solida' : 'ajustes';
+  const porValidar = verdict === 'ajustes' && s.evidencia === 'ninguna' && D2 === 2 && !has('S6') && ['D1','D3','D4','D5','D6'].every(k => L[k] >= 3);
+
+  // arquetipos
+  const conds = {
+    A7: D1 <= 2,
+    A8: verdict === 'solida',
+    A1: has('S5') || (has('S4') && variedad === 'baja'),
+    A2: has('S6') || has('S12'),
+    A3: termo === 'muy_amplia' || (termo === 'amplia' && s.universalidad === 'si'),
+    A6: has('S11') || has('S13'),
+    A4: fam === 'E0',
+    A5: !!sig.S10 || !!sig.S21
+  };
+  const order = ['A7','A8','A1','A2','A3','A6','A4','A5'];
+  let arch = order.find(a => conds[a]) || 'A9';
+  let arch2 = '';
+  if (arch !== 'A8'){
+    arch2 = ['A1','A2','A3','A6','A4','A5'].find(a => a !== arch && conds[a] && !(arch === 'A7' && a === 'A4' && !c.sensacion)) || '';
+  }
+  // dimensión prioritaria
+  const minL = Math.min(...Object.values(L));
+  const prio = DIM_ORDER.find(k => L[k] === minL);
+
+  return { c, txt, nw, sig, on, has, vcls, fam, fam2, emoCount, ideas, ideasDone, tcount, nTypes, variedad, dominante, eco, ecoN,
+    L, score, verdict, porValidar, amplitud, estrechez, termo, arch, arch2, prio, largo, vacios };
+}
+
+/* ---------------- textos del diagnóstico ---------------- */
+function personaQ(A){ return A.c.persona ? Q(A.c.persona) : 'la persona'; }
+function firstTerm(A, id){ const x = A.on(id)[0] || (A.sig[id]||[])[0]; return x ? x.term : ''; }
+function variant(A, arr, salt){ return arr[(hash(A.txt) + (salt||0)) % arr.length]; }
+
+function archText(A, s){
+  const pq = personaQ(A);
+  const faltan = (A.sig.S3||[]).map(x => ING_LABEL[x.field]);
+  if (A.sig.S1 || A.sig.S2) faltan.push('la fórmula «¿Cómo podríamos…?»');
+  const t5 = firstTerm(A,'S5'), t6 = firstTerm(A,'S6') || firstTerm(A,'S12');
+  const detalleA4 = !A.c.sensacion ? 'La sensación todavía está vacía.' : A.sig.S7 ? `${Q(firstTerm(A,'S7'))} describe el servicio, no cómo se siente alguien.` : A.sig.S8 ? `${Q(firstTerm(A,'S8'))} es tan general que no orienta.` : 'Lo que escribiste no nombra una emoción.';
+  const neg = firstTerm(A,'S10') || firstTerm(A,'S21');
+  const solTxt = t5 ? Q(t5) : Q(A.c.verbo);
+  const T = {
+    A7: [`La estructura está levantada, pero faltan piezas: ${listJoin(faltan)}. Antes de evaluar el fondo hay que terminar la forma.`,
+         `Tienes los cimientos, pero a la pregunta todavía le faltan ${listJoin(faltan)}. Sin esas piezas no se sabe bien a qué invita.`],
+    A8: [`Tu pregunta pone en el centro a ${pq} y deja el cómo abierto. Está lista para llevarla a un equipo.`,
+         `Hay una persona concreta, una necesidad clara y una emoción que cuidar. Lo que sigue es usarla bien: llévala a quienes van a idear contigo.`],
+    A1: [`Tu pregunta ya trae la respuesta: ${solTxt}. Cuando la solución viene adentro, las ideas tienden a parecerse entre sí.`,
+         `Antes de idear, la pregunta ya eligió por ti: ${solTxt}. Eso le quita al equipo la posibilidad de encontrar algo mejor.`],
+    A2: [`Tu pregunta dice lo que gana la organización —${Q(t6)}— más que lo que vive ${pq}.`,
+         `Se lee como un objetivo de comité: ${Q(t6)}. La metodología pide mirar desde quien vive el problema.`],
+    A3: [`Es un buen propósito, pero en ella cabe todo: casi cualquier idea serviría. Eso, en lugar de liberar, paraliza.`,
+         `Tu pregunta mira el horizonte completo. Le falta un momento, un lugar o un grupo concreto por donde empezar.`],
+    A6: A.has('S13') && !A.has('S11')
+        ? [`${Q(A.c.persona)} es un grupo tan grande que caben personas con necesidades opuestas. No queda claro para quién estamos diseñando.`,
+           `Con ${Q(A.c.persona)} la pregunta le habla a todos y a nadie. Un protagonista concreto la volvería mucho más útil.`]
+        : [`No queda claro para quién estamos diseñando: ${pq} puede ser más de una persona, con necesidades distintas.`,
+           `Tu pregunta reparte el protagonismo. Cuando hay dos dueños, la necesidad de uno tapa la del otro.`],
+    A4: [`Falta la emoción que queremos que se quede con ${pq}. ${detalleA4}`,
+         `La pregunta funciona en la cabeza pero todavía no en el cuerpo. ${detalleA4}`],
+    A5: [`Tu pregunta dice lo que no queremos —${Q(neg)}— pero no lo que sí. Las ideas necesitan un destino, no solo algo de qué huir.`,
+         `Va en contravía: describe una ausencia (${Q(neg)}). Pregúntate qué hay cuando eso ya no pasa.`],
+    A9: [`Va por buen camino. Hay uno o dos ajustes finos que la pueden dejar lista; el principal está en ${DIM[A.prio].n.toLowerCase()}.`,
+         `La base está bien puesta. Lo que falta es afinar ${DIM[A.prio].n.toLowerCase()}.`]
+  };
+  return variant(A, T[A.arch], 1);
+}
+function archAlso(A){
+  const t5 = firstTerm(A,'S5');
+  return ({
+    A1: t5 ? `trae una solución adentro (${Q(t5)}).` : `su verbo ya decide qué construir (${Q(A.c.verbo)}).`,
+    A2: 'habla más del negocio que de la persona.',
+    A3: 'es más amplia de lo que conviene para empezar a idear.',
+    A6: 'el protagonista no está del todo claro.',
+    A4: 'le falta una emoción que cuidar.',
+    A5: 'tiene partes formuladas en negativo.'
+  })[A.arch2] || '';
+}
+function strengths(A, s){
+  const out = [], c = A.c;
+  if (c.persona && words(c.persona) >= 3 && !A.has('S11') && !A.has('S12') && !A.has('S13')) out.push(`Tu persona, ${Q(c.persona)}, es alguien a quien se le puede poner cara. Así cualquier idea tiene un destinatario real.`);
+  if (s.evidencia === 'dos') out.push('Tu pregunta nace de haber escuchado a personas reales, no de una suposición.');
+  if (s.evidencia === 'vivo') out.push('Partes de algo que vives de primera mano: conoces el problema desde adentro.');
+  if (A.fam !== 'E0' && A.fam !== 'EN' && A.emoCount <= 2 && !A.sig.S7 && !A.sig.S8 && !(A.sig.S10||[]).some(x=>x.field==='sensacion')) out.push(`${Q(c.sensacion)} es una emoción, no un atributo del servicio: le da al equipo un criterio para elegir entre ideas.`);
+  if (A.variedad === 'alta') out.push(`Tus cinco ideas van en ${A.nTypes} direcciones distintas. La pregunta deja espacio para explorar.`);
+  if (A.vcls === 'hum') out.push(`${Q(c.verbo.split(/\s+/)[0])} pone a alguien a acompañar, no a construir. El foco queda en la persona.`);
+  if (c.resultado && !A.has('S6') && !(A.sig.S10||[]).some(x=>x.field==='resultado')) out.push(`El resultado, ${Q(c.resultado)}, está escrito desde lo que logra la persona y en positivo.`);
+  if (A.nw >= 15 && A.nw <= 45) out.push(`Tiene ${A.nw} palabras: cabe en un post-it y se puede poner en la pared de una sala.`);
+  if (!A.vacios) out.push('Ya están las cinco piezas de la anatomía en su lugar.');
+  out.push('Empezaste por el contexto antes que por la fórmula. Ese orden es el que hace buenas preguntas.');
+  return out.slice(0,2);
+}
+function pista(A, s){
+  const pq = personaQ(A), c = A.c, d = A.prio, sol = A.verdict === 'solida';
+  const r = t => ({dim:d, texto:t});
+  if (sol && A.L[d] === 4) return r('Para afinar: ¿qué palabra de tu pregunta defenderías si alguien quisiera quitarla, y cuál podrías soltar?');
+  if (d === 'D1'){
+    const v = (A.sig.S3||[])[0];
+    if (v) return r(`Tu pregunta todavía no dice ${ING_LABEL[v.field]}.` + (s.dolor.trim() ? ` En tu contexto escribiste ${Q(s.dolor.trim())}: ¿qué parte de eso falta en la frase?` : ' ¿Qué te dijo la persona que escuchaste que pueda llenar ese espacio?'));
+    if (A.sig.S1) return r('¿Quién responde esta pregunta? Si la responde un equipo, revisa cómo empieza.');
+    if (A.sig.S2) return r('Revisa el principio y el final: la pregunta mágica abre con «¿Cómo podríamos…» y cierra con signo de interrogación.');
+  }
+  if (d === 'D2'){
+    if (s.evidencia === 'ninguna') return r(`¿A quién podrías escuchar antes de la próxima sesión para confirmar que ${c.meta ? Q(c.meta) : 'esta necesidad'} le importa de verdad?`);
+    if (A.has('S6')) return r(`Si le leyeras ${Q(firstTerm(A,'S6'))} a ${pq}, ¿se reconocería en esas palabras?`);
+    if (A.has('S20')) return r(`Escuchaste a ${Q(s.aQuien.trim())}, pero tu pregunta habla de ${Q(c.persona)}. ¿Son la misma persona?`);
+    if (A.has('S13')) return r(`${Q(c.persona)} es un grupo muy amplio. ¿En cuál de esas personas pensabas cuando escribiste la pregunta?`);
+    if (A.sig.S19) return r('Tu contexto es corto. ¿Qué te dijo exactamente la persona que escuchaste? Esas palabras son la evidencia de tu pregunta.');
+    if (s.evidencia === 'una') return r('Escuchaste a una persona. ¿Quién más vive este problema y podría confirmarlo, o contradecirlo?');
+  }
+  if (d === 'D3'){
+    if (A.has('S5')) return r(`Si ${Q(firstTerm(A,'S5'))} no existiera, ¿qué seguiría necesitando ${pq}?`);
+    if (!A.ideasDone) return r('Haz la prueba de las cinco ideas: es la forma de saber cuánto espacio abre tu pregunta.');
+    if (A.variedad === 'baja') return r(A.dominante ? `Tus ideas son casi todas de tipo ${TYPE_SHORT[A.dominante].toLowerCase()}. ¿Qué parte de tu pregunta las empuja hacia allá?` : `Tus cinco ideas recorren solo ${A.nTypes} tipos. ¿Qué palabra de tu pregunta las está encerrando?`);
+    if (s.ideaFavorita === 'si') return r('Dijiste que ya tienes una solución en mente. ¿Tu pregunta deja ganar a una idea mejor que la tuya?');
+    if (A.has('S4')) return r(`${Q(firstTerm(A,'S4'))} describe una acción de construir. ¿Qué hacemos, en el fondo, por ${pq}?`);
+    if (A.variedad === 'media'){ const un = unusedType(A); return r(`Tus ideas recorren ${A.nTypes} tipos. ¿Qué aparecería si buscaras una idea de un tipo que no usaste, como ${TYPE_SHORT[un].toLowerCase()}?`); }
+  }
+  if (d === 'D4'){
+    if (A.termo === 'desenfocada') return r('Tu pregunta es amplia en la persona y estrecha en la solución. ¿Cuál de las dos ajustarías primero?');
+    if (A.termo.includes('amplia')) return r(`¿En qué momento exacto le pasa esto a ${pq}?`);
+    if (A.termo.includes('estrecha')) return r(A.has('S5') ? `¿Para qué sirve ${Q(firstTerm(A,'S5'))}? Esa respuesta se parece más a tu necesidad.` : `Tu pregunta deja pocas salidas. ¿Para qué quiere ${pq} lo que describe tu pregunta?`);
+  }
+  if (d === 'D5'){
+    if (A.has('S12')) return r(`¿Quién es la persona de carne y hueso que vive lo que le pasa a ${Q(c.persona)}?`);
+    if (A.has('S11')) return r('¿A cuál de los protagonistas le duele primero, o le duele más?');
+    if (!c.sensacion) return r(`Tu pregunta no dice cómo queremos que se sienta ${pq}. ¿Qué emoción te gustaría que se quedara?`);
+    if (A.sig.S7) return r(`${Q(firstTerm(A,'S7'))} describe el servicio. ¿Con qué palabra describiría ${pq} cómo se siente?`);
+    if (A.sig.S9) return r(`De las ${A.emoCount} emociones que escribiste, ¿cuál es la que tiene que quedarse?`);
+    if (A.fam === 'EN') return r(`${Q(firstTerm(A,'S21'))} es lo que queremos dejar atrás. ¿Qué emoción quieres que ocupe su lugar?`);
+    if ((A.sig.S10||[]).some(x=>x.field==='sensacion')) return r(`¿Qué está presente cuando ya no hay ${Q(firstTerm(A,'S10'))}?`);
+    if (A.sig.S8) return r(`${Q(firstTerm(A,'S8'))} es muy general. ¿Qué emoción precisa buscas?`);
+    if (A.has('S13')) return r(`${Q(c.persona)} es un grupo muy amplio. ¿Quiénes exactamente, y en qué momento?`);
+    if (A.fam === 'E0') return r(`La sensación no nombra una emoción. ¿Cómo se sentiría ${pq} si todo saliera bien?`);
+  }
+  if (d === 'D6'){
+    if (A.has('S15')) return r(`¿Alguien de otra área entendería ${Q(firstTerm(A,'S15'))} sin preguntar?`);
+    if (A.nw > 45) return r('Si solo pudieras dejar 30 palabras, ¿cuáles sobreviven?');
+    if (A.has('S23')) return r(`${Q(firstTerm(A,'S23'))} no encaja en la forma «___ a alguien a hacer algo». ¿Qué verbo te deja decir a quién acompañas y hacia dónde?`);
+    if (A.has('S22')){ const x = A.on('S22')[0]; return r(`${ING_LABEL[x.field][0].toUpperCase() + ING_LABEL[x.field].slice(1)} no empieza con un verbo. ¿Qué quiere hacer ${pq}?`); }
+    if (A.largo) return r(`En ${ING_LABEL[A.largo]} escribiste más de 15 palabras. ¿Cuál es el corazón de esa parte?`);
+  }
+  return r(sol ? 'Para afinar: ¿qué palabra de tu pregunta defenderías si alguien quisiera quitarla, y cuál podrías soltar?' : 'Relee tu pregunta en voz alta. ¿Hay alguna palabra que sobre o que falte?');
+}
+function unusedType(A){ const used = new Set(Object.keys(A.tcount)); const pref = ['servicio','comunidad','canal','informacion','proceso','incentivo','alianza','organizacion','producto','aprendizaje','herramienta']; return pref.find(t => !used.has(t)) || 'comunidad'; }
+
+function practica(A, s){
+  const pq = personaQ(A);
+  const t5 = firstTerm(A,'S5');
+  const faltan = (A.sig.S3||[]).map(x => ING_LABEL[x.field]);
+  const amb = {externo:'un cliente o usuario que viva el problema', interno:'un compañero o alguien del equipo que viva el problema', personal:''}[s.ambito] || 'una persona que viva el problema';
+  const P = {
+    P1:{n:'Quita el sustantivo', t:'10 min', p:[ t5 ? `Copia tu pregunta y tacha ${Q(t5)}.` : `Copia tu pregunta y tacha la solución que trae el verbo (${Q(A.c.verbo)}).`, `Debajo escribe tres veces, de tres maneras distintas: «Si esto funcionara perfecto, ${A.c.persona || 'la persona'} podría…»`, 'Subraya la frase que más se parece a lo que escuchaste. Esa es tu necesidad.']},
+    P2:{n:'Escalera de abstracción', t:'10 min', p:['Escribe tu pregunta en el centro de una hoja.', A.arch === 'A3' ? 'Baja un escalón tres veces: ¿en qué momento?, ¿dónde?, ¿con quién exactamente?' : 'Sube un escalón: ¿para qué? Luego baja: ¿en qué momento?, ¿con quién?', 'Quédate en el escalón donde puedas imaginar al menos cinco ideas distintas.']},
+    P3:{n:'Cambia de asiento', t:'10 min', p:[`Imagina que eres ${A.c.persona || 'la persona'} y le escribes a alguien de tu casa un mensaje sobre este problema.`, 'Escribe ese mensaje con sus palabras, no con las de la empresa.', 'Compáralo con tu resultado esperado: ¿qué palabras del mensaje faltan en tu pregunta?']},
+    P4:{n:'La escena del después', t:'10 min', p:[`Imagina a ${A.c.persona || 'la persona'} cinco minutos después de que el problema se resolvió.`, 'Escribe en una o dos líneas qué le cuenta a alguien.', 'Subraya la palabra que nombra cómo se siente. Si no aparece ninguna, sigue escribiendo hasta que aparezca.']},
+    P5:{n:'Dale la vuelta', t:'10 min', p:['Haz una lista con cada «sin», «evitar» o «no» de tu pregunta.', 'Al lado de cada uno escribe qué está presente cuando eso no pasa.', 'Lee la columna de la derecha: ese es el destino de tu pregunta.']},
+    P6:{n:'Elige a uno', t:'15 min', p:['Haz una ficha de tres líneas por cada persona que aparece en tu pregunta: quién es, qué le duele, qué desea.', '¿A quién le duele primero? ¿A quién le duele más?', 'Elige a una. La otra puede tener su propia pregunta mágica.']},
+    P7:{n:'Completa la anatomía', t:'10 min', p:['Relee lo que escribiste en el contexto.', `Para cada pieza que falta (${listJoin(faltan.length ? faltan : ['la fórmula de inicio'])}), busca en ese texto una frase que la sugiera.`, 'Vuelve a la app y completa los ingredientes con tus propias palabras.']},
+    P8:{n:'Diez caminos', t:'10 min', p:['Pon un cronómetro de cinco minutos.', 'Escribe diez ideas que respondan tu pregunta. Una tiene que ser absurda a propósito.', 'Si llegaste a diez sin esfuerzo, la pregunta abre espacio. Si te costó, revisa qué la está cerrando.']},
+    P9:{n:'Prueba del pasillo', t:'10 min', p:['Léele tu pregunta a alguien que no conozca el reto.', 'Pídele que te la explique con sus palabras.', 'Anota dónde se confundió o qué cambió: ahí está lo que falta aclarar.']},
+    P10:{n:'Escucha de 15 minutos', t:'15 min', p:[ s.ambito === 'personal' ? 'Durante tres días, anota cada vez que te pasa: cuándo, dónde y qué estabas haciendo.' : `Busca a ${amb}.`, s.ambito === 'personal' ? 'Al final de cada día respóndete: ¿qué hice?, ¿cómo me sentí?' : 'Hazle tres preguntas: ¿cuándo fue la última vez que te pasó?, ¿qué hiciste?, ¿cómo te sentiste?', 'Anota sus palabras exactas y vuelve a tu pregunta: ¿se reconocería en ella?']}
+  };
+  let id;
+  if (A.prio === 'D2' && s.evidencia === 'ninguna') id = 'P10';
+  else id = {A1:'P1', A2:'P3', A3:'P2', A4:'P4', A5:'P5', A6:'P6', A7:'P7', A8:'P8', A9:'P9'}[A.arch];
+  return Object.assign({id}, P[id]);
+}
+function trabajo(A, s){
+  const pq = personaQ(A);
+  const sens = A.c.sensacion ? Q(A.c.sensacion) : '';
+  const T = {
+    lidero:{
+      E1:'Pregunta a tu equipo qué necesitan saber antes de decidir, no después. Recoge sus respuestas sin defender las tuyas.',
+      E2:'Delega el «cómo»: entrega la pregunta a tu equipo y no lleves tu solución a la reunión.',
+      E3:'Abre la próxima reunión con la pregunta y pide que la primera idea venga de quien menos habla.',
+      E4:'Identifica el momento de más tensión de tu equipo en la semana y obsérvalo sin intervenir. Anota qué lo vuelve pesado.',
+      E5:`Usa ${sens || 'la emoción de tu pregunta'} como filtro: ninguna idea pasa si no logra que ${pq} se sienta así.`,
+      E6:`Pídele a tu equipo tres ideas que hagan disfrutar a ${pq}, no solo resolverle el problema, y elijan la que más ganas les dé de probar.`,
+      E7:`Lleva la pregunta a tu equipo sin respuestas y pide que cada quien traiga una pregunta nueva sobre ${pq}. La curiosidad se contagia.`,
+      EX:`Comparte con tu equipo la emoción que escribiste, ${sens}, y pregunten juntos qué la haría aparecer en ${pq}.`,
+      E0:`Antes de idear con el equipo, definan juntos cómo debería sentirse ${pq}. Sin eso no sabrán si una idea funcionó.`
+    },
+    equipo:{
+      E1:`Mapea qué información le falta hoy a ${pq} y llévala a tu líder como pregunta, no como propuesta.`,
+      E2:`Propón un piloto pequeño en el que ${pq} haga el primer intento por su cuenta, y observa dónde se detiene.`,
+      E3:`Invita a ${pq} a idear contigo en lugar de diseñar para ella.`,
+      E4:`Acompaña a ${pq} en su momento más tenso y anota qué lo hace pesado.`,
+      E5:`Haz visible un logro de ${pq} que nadie esté mirando y cuenta en tu equipo cómo reaccionó.`,
+      E6:`Observa un momento en que ${pq} disfrute algo parecido y anota qué lo hace posible. Llévalo a tu equipo como pista.`,
+      E7:`Pregúntale a ${pq} qué le gustaría descubrir o entender, y anota la pregunta tal como la diga.`,
+      EX:`Pregúntale a ${pq} cuándo ha sentido algo como ${sens} y qué estaba pasando en ese momento.`,
+      E0:`Pregúntale a ${pq} cómo se sintió la última vez que esto salió bien. Esa respuesta le falta a tu pregunta.`
+    },
+    personal:{
+      E1:'Anota durante una semana en qué momentos te sientes sin control. Busca qué tienen en común.',
+      E2:'Elige una tarea relacionada y hazla sin pedir ayuda una vez. Registra qué te detuvo.',
+      E3:'Cuéntale tu pregunta a alguien que viva algo parecido y escucha su versión antes de dar la tuya.',
+      E4:'Encuentra el momento del día en que la tensión sube y anota qué lo antecede.',
+      E5:'Escribe en una línea para qué te importa este reto y pégala junto a tu pregunta.',
+      E6:'Anota tres momentos de esta semana en los que disfrutaste algo relacionado con tu reto. ¿Qué tenían en común?',
+      E7:'Escribe cinco preguntas que te despierte tu reto, sin responder ninguna. Elige la que más curiosidad te dé.',
+      EX:`Escribe qué tendría que pasar para que sintieras algo como ${sens}. Esa lista es tu mapa.`,
+      E0:'Antes de seguir, nombra la emoción que buscas. Sin ella no sabrás si funcionó.'
+    }
+  };
+  const rol = T[s.rol] ? s.rol : 'equipo';
+  return { frente: ROL_FRENTE[rol], texto: T[rol][A.fam === 'EN' ? 'E0' : A.fam] || T[rol].E0, fam: A.fam };
+}
+function reflexion(A){
+  const pq = personaQ(A);
+  const R = {
+    A1:['¿Qué perderías si tu solución favorita resultara no ser la mejor?','¿Qué tendría que pasar para que abandonaras la idea que ya tienes?'],
+    A2:[`¿Qué gana ${pq} si a la organización le va bien con esto?`,`Si ${pq} leyera tu pregunta, ¿sentiría que habla de su vida?`],
+    A3:['Si solo tuvieras una semana, ¿por qué parte del problema empezarías?','¿Cuál es el momento más pequeño del problema en el que ya se nota el dolor?'],
+    A4:[`¿Cómo sabrías que algo cambió en cómo se siente ${pq}?`,`¿Qué emoción le falta hoy a ${pq} en este momento del problema?`],
+    A5:['¿Qué quieres que pase, más allá de lo que quieres evitar?','¿Cómo se ve el día en que el problema ya no existe?'],
+    A6:['¿Qué cambia en tu pregunta si eliges a una sola persona?','Si te enfocas en una sola persona, ¿quién queda por fuera y qué harías con ella?'],
+    A7:['¿Qué te dijo la persona que escuchaste que todavía no está en la frase?','¿Qué pieza de la anatomía te costó más escribir, y por qué?'],
+    A8:['¿Qué respuesta a tu pregunta te incomodaría, y por qué?','¿Quién más debería estar en la sala cuando lleves esta pregunta a tu equipo?'],
+    A9:['¿Qué palabra de tu pregunta defenderías si alguien quisiera quitarla?','¿Qué parte de tu pregunta te emociona más idear?']
+  };
+  return variant(A, R[A.arch], 3);
+}
+function crossIdeas(A, s){
+  if (!A.ideasDone) return 'No hiciste la prueba de las cinco ideas, así que la apertura de tu pregunta queda sin evidencia. Puedes volver a ella en cualquier momento.';
+  let t;
+  const t5 = firstTerm(A,'S5');
+  if (A.eco && t5) t = `Tu pregunta ya nombra ${Q(t5)}, y ${Math.max(A.ecoN, A.tcount.herramienta||0)} de tus cinco ideas van por ese mismo camino.`;
+  else if (A.dominante) t = `${A.tcount[A.dominante]} de tus cinco ideas son de tipo ${TYPE_SHORT[A.dominante].toLowerCase()}. ¿Tu pregunta empuja hacia allá?`;
+  else if (A.variedad === 'alta') t = `Tus ideas van en ${A.nTypes} direcciones distintas: la pregunta deja espacio para explorar.`;
+  else if (A.variedad === 'media') t = `Tus ideas recorren ${A.nTypes} tipos. Hay espacio, aunque todavía quedan territorios sin explorar, como ${TYPE_SHORT[unusedType(A)].toLowerCase()}.`;
+  else t = `Tus ideas se quedan en ${A.nTypes === 1 ? 'un solo tipo' : A.nTypes + ' tipos'}. La pregunta deja pocas salidas.`;
+  if (s.ideaFavorita === 'si') t += ' Y dijiste que ya tienes una solución en mente.';
+  return t;
+}
+function ingStatus(A, k){
+  const c = A.c, x = id => (A.sig[id]||[]).filter(y => y.field === k && !y.off);
+  if (!c[k]) return ['red', `Falta ${ING_LABEL[k]}.`];
+  const t = id => Q(x(id)[0].term);
+  if (k === 'verbo'){
+    if (x('S23').length) return ['amber', `${t('S23')} no encaja en la forma «___ a alguien a hacer algo».`];
+    if (x('S5').length) return ['red', `${t('S5')} ya es una solución.`];
+    if (x('S4').length) return ['red', `${t('S4')} es un verbo de solución: dice qué construir, no qué vive la persona.`];
+    if (x('S4b').length) return ['amber', `${t('S4b')} es un verbo amplio. ¿Qué acción concreta hay detrás?`];
+    if (x('S4c').length) return ['green', `${t('S4c')} pone a alguien a acompañar.`];
+    return ['green', 'Verbo de acción.'];
+  }
+  if (k === 'persona'){
+    if (x('S12').length) return ['red', `${t('S12')} es un área o una entidad, no una persona.`];
+    if (x('S5').length) return ['red', `${t('S5')} aparece en la persona: ¿es parte del quién o de la solución?`];
+    if (x('S11').length) return ['amber', 'Parece haber más de un protagonista.'];
+    if (x('S13').length) return ['amber', 'Es un grupo muy amplio.'];
+    if (x('S20').length) return ['amber', 'No coincide con la persona que escuchaste.'];
+    return ['green', 'Una persona concreta.'];
+  }
+  if (k === 'meta' || k === 'resultado'){
+    if (x('S5').length) return ['red', `${t('S5')} es una solución, no una necesidad.`];
+    if (x('S6').length) return ['amber', `${t('S6')} habla desde el negocio.`];
+    if (x('S22').length) return ['amber', 'No empieza con un verbo: ¿qué quiere hacer la persona?'];
+    if (x('S10').length) return ['amber', `${t('S10')} lo formula en negativo.`];
+    return ['green', k === 'meta' ? 'Una necesidad, no una solución.' : 'Escrito desde lo que logra la persona.'];
+  }
+  if (k === 'sensacion'){
+    if (A.fam === 'E0' && x('S7').length) return ['red', `${t('S7')} es un atributo del servicio, no una emoción.`];
+    if (A.fam === 'E0') return ['red', 'No nombra una emoción reconocible.'];
+    if (A.fam === 'EN') return ['amber', `${Q(firstTerm(A,'S21'))} es una emoción que queremos dejar atrás.`];
+    if (x('S10').length) return ['amber', `${t('S10')} la formula en negativo.`];
+    if (A.sig.S9) return ['amber', `${A.emoCount} emociones: ¿cuál tiene que quedarse?`];
+    if (x('S8').length) return ['amber', `${t('S8')} es demasiado general.`];
+    if (x('S24').length) return ['amber', `${t('S24')} no concuerda en número con la persona.`];
+    return ['green', A.fam === 'EX' ? 'Una emoción propia.' : 'Emoción de ' + famName(A.fam).toLowerCase() + '.'];
+  }
+  return ['green',''];
+}
+function criteria(A){
+  const c = A.c, h = A.has;
+  return [
+    ['Empieza con «¿Cómo podríamos…?»', !A.sig.S1 && !A.sig.S2],
+    ['Incluye un verbo de acción', !!c.verbo && !h('S4')],
+    ['Define claramente el usuario', !!c.persona && !h('S11') && !h('S12') && !h('S13')],
+    ['Expresa una necesidad o meta', !!c.meta && !(A.sig.S6||[]).some(x=>x.field==='meta' && !x.off) && !(A.sig.S22||[]).some(x=>x.field==='meta' && !x.off)],
+    ['Evita proponer una solución', !h('S5') && !h('S4')],
+    ['Se enfoca en el resultado esperado', !!c.resultado && !(A.sig.S6||[]).some(x=>x.field==='resultado' && !x.off) && !(A.sig.S10||[]).some(x=>x.field==='resultado') && !(A.sig.S22||[]).some(x=>x.field==='resultado' && !x.off)],
+    ['Incluye la sensación que queremos generar', A.fam !== 'E0' && A.fam !== 'EN' && !A.sig.S9 && !(A.sig.S10||[]).some(x=>x.field==='sensacion')]
+  ];
+}
+
+/* ---------------- alertas en vivo ---------------- */
+function alertText(A, x, s){
+  const pq = personaQ(A), T = Q(x.term);
+  switch(x.id){
+    case 'S1': return 'Empieza en singular. La pregunta mágica se hace en plural, en equipo: «¿Cómo podríamos…?»';
+    case 'S2': return 'La pregunta debe empezar con «¿Cómo podríamos…» y terminar con signo de interrogación.';
+    case 'S4': return `${T} suena a construir algo. ¿Es lo que vive la persona o la forma de dárselo?`;
+    case 'S4b': return `${T} es un verbo amplio. ¿Qué acción concreta hay detrás?`;
+    case 'S4c': return `${T} pone a alguien a acompañar. Buen comienzo.`;
+    case 'S5': return x.inReto ? `¿${T} es el tema de tu reto o la solución que ya elegiste?` : `${T}, ¿es lo que la persona necesita o una forma de dárselo?`;
+    case 'S6': return `${T} habla de lo que gana la organización. ¿Cómo lo diría ${pq}?`;
+    case 'S7': return `${T} describe el servicio. ¿Cómo se sentiría la persona?`;
+    case 'S8': return `${T} es muy general. ¿Qué emoción precisa buscas?`;
+    case 'S9': return `Escribiste ${A.emoCount} emociones. ¿Cuál es la que tiene que quedarse?`;
+    case 'S10': return `${T} dice lo que no queremos. ¿Qué hay cuando eso ya no pasa?`;
+    case 'S11': return 'Parece que hay más de un protagonista. ¿Para quién diseñas primero?';
+    case 'S12': return `${T} es un área o una entidad. ¿Quién es la persona que lo vive?`;
+    case 'S13': return `${T} es un grupo muy grande. ¿Quiénes exactamente, y en qué momento?`;
+    case 'S14': return x.term === 'corta' ? `Tiene ${A.nw} palabras. ¿Le falta algún ingrediente?` : `Tiene ${A.nw} palabras; en un post-it caben unas 45. ¿Qué podrías quitar sin que pierda sentido?`;
+    case 'S15': return `${T} es una sigla. ¿La entendería alguien de otra área?`;
+    case 'S21': return `${T} es una emoción que queremos dejar atrás. ¿Cuál queremos que se quede?`;
+    case 'S22': return x.field === 'meta' ? `La necesidad no empieza con un verbo. Escribe lo que la persona quiere hacer: tener, encontrar, entender…` : `El resultado no empieza con un verbo. ¿Qué puede hacer la persona? Aprender, decidir, disfrutar…`;
+    case 'S23': return `${T} no encaja en la forma «___ a alguien a hacer algo». Prueba con un verbo que sí, como los de abajo.`;
+    case 'S24': return pluralPersona(A.c.persona) ? `Tu persona está en plural y ${T} en singular. ¿Concuerdan?` : `Tu persona está en singular y ${T} en plural. ¿Concuerdan?`;
+    case 'S20': return `Escuchaste a ${Q(s.aQuien.trim())}, pero tu persona es ${Q(A.c.persona)}. ¿Son la misma?`;
+  }
+  return '';
+}
+const DISMISS_LABEL = {S22:'Así está bien', S23:'Así está bien', S24:'Así está bien', S4:'Lo dejo así', S5:'No es una solución', S6:'Lo dejo así', S11:'Es una sola persona', S12:'Es una persona', S13:'Es concreta', S15:'Se entiende', S20:'Sí, es la misma'};
+function renderAlerts(ids, fields){
+  const box = $('#alerts'); if (!box) return;
+  const A = analyze(st);
+  const items = [];
+  ids.forEach(id => (A.sig[id]||[]).forEach(x => { if (!fields || fields.includes(x.field)) items.push(Object.assign({id}, x)); }));
+  box.innerHTML = items.map(x => {
+    if (x.off) return `<div class="alert done"><span class="txt">Marcaste ${Q(esc(x.term || ''))} como «${esc(DISMISS_LABEL[x.id]||'no aplica').toLowerCase()}».</span><button class="mini" data-undo="${esc(x.key)}" type="button">Deshacer</button></div>`;
+    const good = x.id === 'S4c';
+    const soft = x.id === 'S4b';
+    return `<div class="alert${good?' good':soft?' soft':''}"><span class="ico">${good?'✓':soft?'·':'?'}</span><span class="txt">${esc(alertText(A, x, st))}</span>${x.dismissable ? `<button class="mini" data-dismiss="${esc(x.key)}" type="button">${esc(DISMISS_LABEL[x.id]||'No aplica')}</button>` : ''}</div>`;
+  }).join('');
+  return A;
+}
+
+/* ---------------- pasos ---------------- */
+const STEPS = ['inicio','contexto','persona','meta','resultado','sensacion','verbo','frase','ideas','diagnostico'];
+const STEP_LABEL = {inicio:'Inicio', contexto:'Contexto', persona:'Ingrediente 1 · Persona', meta:'Ingrediente 2 · Necesidad', resultado:'Ingrediente 3 · Resultado', sensacion:'Ingrediente 4 · Sensación', verbo:'Ingrediente 5 · Verbo', frase:'Tu pregunta', ideas:'Prueba de las cinco ideas', diagnostico:'Diagnóstico'};
+
+function chips(key, opts){
+  return `<div class="chips" role="radiogroup">${opts.map(([v,l]) => `<button type="button" class="chip${st[key]===v?' on':''}" role="radio" aria-checked="${st[key]===v}" data-chip="${key}" data-v="${v}">${esc(l)}</button>`).join('')}</div>`;
+}
+function field(key, label, opts={}){
+  const tag = opts.input ? `<input type="${opts.type||'text'}" id="f_${key}" data-k="${key}" value="${esc(st[key])}" placeholder="${esc(opts.ph||'')}" autocomplete="${opts.ac||'off'}" ${opts.big?'class="big-input"':''}>`
+    : `<textarea id="f_${key}" data-k="${key}" rows="${opts.rows||2}" placeholder="${esc(opts.ph||'')}" ${opts.big?'class="big-input"':''}>${esc(st[key])}</textarea>`;
+  return `<div class="field"><label for="f_${key}">${label}${opts.req?' <span class="req">*</span>':''}</label>${opts.hint?`<p class="hint">${opts.hint}</p>`:''}${tag}${opts.after||''}</div>`;
+}
+function examples(list){ return `<div class="examples"><span class="tag">Así lo escribieron en otras preguntas</span><ul>${list.map(x=>`<li>${esc(x)}</li>`).join('')}</ul></div>`; }
+function preview(hl){ return `<div class="preview"><span class="lbl">Tu pregunta hasta ahora</span><p class="q" id="pv">${assemble(st,'html',hl)}</p></div>`; }
+function navBtns(nextLabel, opts={}){
+  return `<div class="nav no-print">${st.step>0?`<button class="btn btn-ghost" data-act="back" type="button">← Atrás</button>`:''}<button class="btn btn-primary" data-act="next" type="button">${nextLabel||'Siguiente →'}</button></div>${opts.extra||''}<div class="err" id="navErr" role="alert"></div>`;
+}
+
+const ING_STEPS = {
+  persona:{n:1, title:'La persona', lead:'¿Para quién es esto? Entre más concreta, mejor: no «los clientes», sino quiénes y en qué momento.', ex:['pasajeros con un vuelo retrasado','adultos mayores que usan la app del banco por primera vez','comensales que esperan mesa un sábado en la noche'], remind:()=> st.aQuien.trim() ? `<div class="reminder"><b>Escuchaste a:</b> ${esc(st.aQuien.trim())}</div>` : '', ph:'¿Quién vive el problema?', alerts:['S11','S12','S13','S20','S5'], fixed:''},
+  meta:{n:2, title:'La necesidad', lead:'¿Qué busca, desea o necesita esa persona? Empieza con un verbo: lo que ella quiere hacer, no la solución.', ex:['entender qué está pasando y qué opciones tienen','completar sus transacciones','sentir que su tiempo vale la pena'], remind:()=> st.dolor.trim() ? `<div class="reminder"><b>Encontraste:</b> ${esc(st.dolor.trim())}</div>` : '', ph:'encontrar…, entender…, tener…', alerts:['S22','S5','S6'], fixed:'… a'},
+  resultado:{n:3, title:'El resultado esperado', lead:'Si la necesidad se resuelve, ¿qué logra la persona? Empieza con un verbo y escríbelo desde ella, en positivo.', ex:['reorganizar su plan','hacerlo por su cuenta','disfrutar la espera'], remind:()=>'', ph:'aprender…, decidir…, disfrutar…', alerts:['S22','S5','S6','S10'], fixed:'… de manera que pueda'},
+  sensacion:{n:4, title:'La sensación', lead:'¿Cómo queremos que se sienta, y que esa sensación se quede con la persona? Una o dos emociones, en el mismo número que tu persona. No atributos del servicio como «ágil» o «eficiente».', ex:['informados y en control','seguros y capaces','tranquilos y bienvenidos'], remind:()=>'', ph:'¿Cómo se siente?', alerts:['S21','S24','S7','S8','S9','S10','S5'], fixed:'… sintiéndose'},
+  verbo:{n:5, title:'El verbo', lead:'Ahora sí: ¿qué acción nos pone a trabajar por esa persona? Tiene que funcionar en la forma «___ a alguien a hacer algo». Lo dejamos de último para que no arrastre una solución.', ex:null, remind:()=>'', ph:'Un verbo en infinitivo', alerts:['S23','S4','S4b','S4c','S5'], fixed:'¿Cómo podríamos…'}
+};
+
+function renderProgress(){
+  const name = STEPS[st.step];
+  const pct = Math.round((st.step) / (STEPS.length-1) * 100);
+  $('#progress').innerHTML = name === 'inicio' ? '' : `<div class="progress-track"><div class="progress-fill" style="width:${pct}%"></div></div><div class="progress-label"><span>${esc(STEP_LABEL[name])}</span><span>${name==='diagnostico' ? 'Ronda ' + st.ronda : 'Paso ' + st.step + ' de ' + (STEPS.length-1)}</span></div>`;
+  $('#app').classList.toggle('wide', name === 'diagnostico');
+}
+
+function render(){
+  const name = STEPS[st.step];
+  renderProgress();
+  const m = $('#main');
+  if (name === 'inicio') m.innerHTML = viewInicio();
+  else if (name === 'contexto') m.innerHTML = viewContexto();
+  else if (ING_STEPS[name]) m.innerHTML = viewIngrediente(name);
+  else if (name === 'frase') m.innerHTML = viewFrase();
+  else if (name === 'ideas') m.innerHTML = viewIdeas();
+  else m.innerHTML = viewDiagnostico();
+  $$('textarea', m).forEach(autoGrow);
+  live();
+}
+
+function viewInicio(){
+  const hasDraft = load('pm2.state', null) && (st.persona || st.reto || st.meta);
+  return `<section class="card welcome"><div class="blob"></div><div class="inner">
+    <p class="eyebrow">DotX · Creatividad e Innovación</p>
+    <h1>Tu pregunta mágica</h1>
+    <p class="lead">Vamos a construir, paso a paso, una pregunta que abra caminos en lugar de cerrarlos. Al final recibes un diagnóstico y una ruta de acción para llevarla a tu trabajo.</p>
+    <div class="steps-mini"><div><b>1</b>Partes de una persona real</div><div><b>2</b>Armas la pregunta pieza por pieza</div><div><b>3</b>La pones a prueba y recibes tu ruta</div></div>
+    <p class="small muted">Toma unos 15 minutos. Tu avance se guarda en este navegador.</p>
+  </div></section>
+  ${hasDraft ? `<div class="resume"><b>Tienes una pregunta en curso.</b> Puedes seguir donde la dejaste o empezar otra.<div class="nav" style="margin-top:10px"><button class="btn btn-primary" data-act="resume" type="button">Seguir</button><button class="btn btn-ghost" data-act="reset" type="button">Empezar otra</button></div></div>` : ''}
+  <section class="card">
+    ${field('nombre','Tu nombre completo',{input:true, req:true, ph:'Nombre y apellido', ac:'name'})}
+    ${field('correo','Tu correo',{input:true, type:'email', ph:'nombre@empresa.com', ac:'email', hint:'Para que tu facilitador pueda responderte.'})}
+    <div class="field"><label for="f_grupo">Tu grupo <span class="req">*</span></label>
+      <select id="f_grupo" data-k="grupo"><option value="">Elige tu grupo</option>${['G1','G2','G3','G4','G5','Otro'].map(g=>`<option ${st.grupo===g?'selected':''}>${g}</option>`).join('')}</select></div>
+    <div class="field"><span class="qlabel">¿Desde dónde trabajas este reto? <span class="req">*</span></span>${chips('rol',[['lidero','Lidero un equipo'],['equipo','Hago parte de un equipo'],['personal','Es un reto personal']])}</div>
+    ${navBtns('Empezar →')}
+  </section>`;
+}
+function viewContexto(){
+  return `<section class="card">
+    <p class="eyebrow">Antes de la fórmula</p>
+    <h1>Primero, la persona</h1>
+    <p class="lead">Una buena pregunta mágica nace de alguien real. Cuéntanos de dónde sale la tuya.</p>
+    ${field('reto','¿En qué reto estás trabajando?',{req:true, ph:'Ej.: la espera de los pasajeros cuando un vuelo se retrasa'})}
+    ${field('aQuien','¿A quién observaste o escuchaste?',{ph:'Ej.: tres pasajeros en la sala de espera del vuelo de las 7'})}
+    ${field('dolor','¿Qué frustración o deseo encontraste en esa persona?',{ph:'Ej.: nadie les decía qué pasaba ni qué opciones tenían', rows:3})}
+    <div class="field"><span class="qlabel">¿Con cuántas personas que viven este problema hablaste? <span class="req">*</span></span>${chips('evidencia',[['ninguna','Con ninguna, lo supongo'],['una','Con una'],['dos','Con dos o más'],['vivo','Lo vivo yo']])}</div>
+    <div class="field"><span class="qlabel">¿Quién vive el problema? <span class="req">*</span></span>${chips('ambito',[['externo','Un cliente o usuario externo'],['interno','Un compañero o equipo interno'],['personal','Yo mismo']])}</div>
+    ${navBtns()}
+  </section>`;
+}
+function viewIngrediente(k){
+  const I = ING_STEPS[k];
+  const fam = k === 'sensacion' ? `<div class="fam-row" id="famRow">${Object.entries(FAM).map(([id,F])=>`<span class="fam" data-fam="${id}">${F.n}</span>`).join('')}</div>` : '';
+  return `<section class="card">
+    <p class="eyebrow">Ingrediente ${I.n} de 5</p>
+    <h1>${I.title}</h1>
+    <p class="lead">${I.lead}</p>
+    ${I.remind()}
+    ${I.fixed ? `<p class="fixed-text">${esc(k === 'resultado' ? '… de manera que ' + (pluralPersona(cleaned(st).persona) ? 'puedan' : 'pueda') : I.fixed)}</p>` : ''}
+    <div class="field" style="margin-bottom:12px"><label for="f_${k}" class="sr" style="position:absolute;left:-9999px">${I.title}</label><textarea id="f_${k}" data-k="${k}" rows="1" class="big-input" placeholder="${esc(I.ph)}">${esc(st[k])}</textarea></div>
+    ${fam}
+    <div class="alerts" id="alerts"></div>
+    ${I.ex ? examples(I.ex) : `<div class="examples"><span class="tag">Verbos que encajan en la fórmula</span><div class="chips" style="margin-top:8px">${LEX.vSug.map(v=>`<button type="button" class="chip" data-fill="verbo" data-v="${v}">${v}</button>`).join('')}</div></div>`}
+    ${preview(k)}
+    ${navBtns()}
+  </section>`;
+}
+function viewFrase(){
+  const val = st.editadaManual && st.textoManual.trim() ? st.textoManual : assemble(st,'text');
+  return `<section class="card">
+    <p class="eyebrow">Tu pregunta completa</p>
+    <h1>Léela en voz alta</h1>
+    <p class="lead">Así queda armada. Puedes ajustar la redacción para que suene natural; tus ingredientes quedan guardados.</p>
+    <div class="field" style="margin-bottom:4px"><label for="f_frase" style="position:absolute;left:-9999px">Pregunta</label><textarea id="f_frase" data-frase rows="4" class="big-input">${esc(val)}</textarea></div>
+    <div class="wordcount"><span id="wc"></span><span id="reasm"></span></div>
+    <div class="alerts" id="alerts"></div>
+    <h3 style="margin:4px 0 8px">Los 7 criterios</h3>
+    <ul class="checklist" id="checklist"></ul>
+  </section>
+  <section class="card">
+    <h2>Dos preguntas sobre tu pregunta</h2>
+    <div class="field" style="margin-top:12px"><span class="qlabel">¿Tu pregunta habla de un contexto concreto o le serviría a cualquiera? <span class="req">*</span></span><p class="hint" style="font-size:14.5px;color:var(--ink-soft);margin:-2px 0 8px">Si serviría igual en cualquier lugar, probablemente es muy amplia.</p>${chips('universalidad',[['si','Le serviría a cualquiera'],['mas','Más o menos'],['no','Es de un contexto concreto']])}</div>
+    <div class="field"><span class="qlabel">¿Ya tienes una solución en mente? <span class="req">*</span></span>${chips('ideaFavorita',[['no','No'],['sospecha','Tengo una sospecha'],['si','Sí, y quiero llegar a ella']])}</div>
+    ${navBtns()}
+  </section>`;
+}
+function typeSelect(i){
+  const v = st.ideas[i].tipo;
+  return `<select data-tipo="${i}" aria-label="Tipo de la idea ${i+1}"><option value="">¿De qué tipo es?</option>${TYPES.map(g=>`<optgroup label="${esc(g.g)}">${g.items.map(([k,n,e])=>`<option value="${k}" ${v===k?'selected':''}>${e} ${esc(n)}</option>`).join('')}</optgroup>`).join('')}</select>`;
+}
+function viewIdeas(){
+  return `<section class="card">
+    <p class="eyebrow">La prueba</p>
+    <h1>Cinco ideas rápidas</h1>
+    <p class="lead">Escribe cinco ideas que respondan tu pregunta. No tienen que ser buenas: la prueba es para tu pregunta, no para tus ideas. Después dinos de qué tipo es cada una.</p>
+    <div class="preview" style="margin-bottom:16px"><span class="lbl">Tu pregunta</span><p class="q">${esc(finalText(st))}</p></div>
+    ${st.ideas.map((it,i)=>`<div class="idea"><div class="idea-head"><span class="idea-num">${i+1}</span>Idea ${i+1}</div><textarea data-idea="${i}" rows="1" placeholder="Una línea basta">${esc(it.t)}</textarea>${typeSelect(i)}</div>`).join('')}
+    <div class="variety" id="variety"></div>
+    ${navBtns('Ver mi diagnóstico →', {extra:`<div style="text-align:center"><button class="btn-link" data-act="skipIdeas" type="button">Saltar la prueba por ahora</button></div>`})}
+  </section>`;
+}
+
+/* ---------------- diagnóstico ---------------- */
+let LAST = null;
+function viewDiagnostico(){
+  const A = analyze(st), s = st;
+  LAST = A;
+  // historial
+  const rec = {ronda:s.ronda, fecha:today(), texto:A.txt, niveles:A.L, arquetipo:A.arch, veredicto:A.porValidar?'validar':A.verdict, puntaje:A.score};
+  const prevIdx = history.findIndex(h => h.ronda === s.ronda);
+  if (prevIdx >= 0) history[prevIdx] = Object.assign(history[prevIdx], rec); else history.push(rec);
+  store('pm2.history', history);
+  const prev = history.find(h => h.ronda === s.ronda - 1);
+
+  const vk = A.porValidar ? 'validar' : A.verdict, V = VERDICT[vk];
+  const ar = ARCH[A.arch];
+  const fz = strengths(A, s);
+  const pi = pista(A, s), pr = practica(A, s), tr = trabajo(A, s);
+  const also = archAlso(A);
+  const crit = criteria(A);
+
+  // mapa de anatomía
+  const stc = {}; ['verbo','persona','meta','resultado','sensacion'].forEach(k => stc[k] = ingStatus(A, k));
+  let anatQ;
+  if (s.editadaManual && s.textoManual.trim()) anatQ = esc(A.txt);
+  else {
+    const c = A.c, u = k => c[k] ? `<span class="u u-${stc[k][0]}">${esc(c[k])}</span>` : `<span class="u u-red ph">(${ING_NAME[k].toLowerCase()})</span>`;
+    anatQ = `¿Cómo podríamos ${u('verbo')} a ${u('persona')} a ${u('meta')}, de manera que ${pluralPersona(c.persona)?'puedan':'pueda'} ${u('resultado')}, sintiéndose ${u('sensacion')}?`;
+  }
+  const anatRows = ['persona','meta','resultado','sensacion','verbo'].map(k => `<div class="anat-row"><span class="d d-${stc[k][0]}"></span><span><b>${ING_NAME[k]}:</b> ${esc(stc[k][1])}</span></div>`).join('');
+
+  // barras
+  const bars = Object.keys(DIM).map(k => `<div class="dim"><div class="dim-top"><span class="nm">${DIM[k].n}</span><span class="lv">${LEVEL[A.L[k]]}</span></div><div class="segs" role="img" aria-label="${DIM[k].n}: ${LEVEL[A.L[k]]}, nivel ${A.L[k]} de 4">${[1,2,3,4].map(i=>`<span class="seg" style="${i<=A.L[k]?'background:'+LEVEL_COLOR[A.L[k]]:''}"></span>`).join('')}</div></div>`).join('');
+
+  // termómetro
+  const ZN = ['muy_amplia','amplia','justa','estrecha','muy_estrecha'], ZL = ['Muy amplia','Amplia','Justa','Estrecha','Muy estrecha'];
+  const zi = ZN.indexOf(A.termo);
+  const markers = A.termo === 'desenfocada' ? `<span class="marker" style="left:20%">▼</span><span class="marker" style="left:80%">▼</span>` : `<span class="marker" style="left:${zi*20+10}%">▼</span>`;
+  const termoTxt = {
+    muy_amplia:'Tu pregunta es muy amplia: cabe casi todo y por eso cuesta empezar.',
+    amplia:'Tu pregunta tira hacia lo amplio. Un momento o un grupo más concreto la enfocaría.',
+    justa:'El alcance está en el punto: enfoca un problema humano y deja abierto el cómo.',
+    estrecha:'Tu pregunta tira hacia lo estrecho. Deja menos salidas de las que podría.',
+    muy_estrecha:'Tu pregunta es muy estrecha: casi trae la respuesta puesta.',
+    desenfocada:'Tu pregunta está desenfocada: es amplia en la persona y estrecha en la solución, al mismo tiempo.'
+  }[A.termo];
+
+  // ideas
+  const typeTiles = Object.keys(TYPE).map(k => { const n = A.tcount[k]||0; return `<div class="type${n?' on':''}"><span class="e">${TYPE[k].e}</span>${TYPE_SHORT[k]}${n>1?`<br><span class="c">×${n}</span>`:''}</div>`; }).join('');
+
+  // comparación
+  let compare = '';
+  if (prev){
+    const rows = Object.keys(DIM).map(k => { const a = prev.niveles[k], b = A.L[k]; const cls = b>a?'up':b<a?'down':'eq'; const sym = b>a?'↑':b<a?'↓':'='; return `<div class="compare-row"><span class="nm">${DIM[k].n} <span class="${cls}">${sym}</span></span><span class="vals">${a===b ? LEVEL[b] + ' · sin cambio' : LEVEL[a] + ' → ' + LEVEL[b]}</span></div>`; }).join('');
+    const prevPrio = DIM_ORDER.find(k => prev.niveles[k] === Math.min(...Object.values(prev.niveles)));
+    const mejoro = A.L[prevPrio] > prev.niveles[prevPrio];
+    const changed = prev.arquetipo !== A.arch ? `Pasaste de ${Q(ARCH[prev.arquetipo].n)} a ${Q(ARCH[A.arch].n)}.` : `Sigues en ${Q(ARCH[A.arch].n)}.`;
+    compare = `<section class="card"><div class="section-title"><span class="n">↺</span><h2>Frente a tu ronda ${prev.ronda}</h2></div>
+      <p>${mejoro ? `Subiste en ${esc(DIM[prevPrio].n.toLowerCase())}, que era tu ajuste prioritario. ` : ''}${esc(changed)}</p><div class="compare">${rows}</div></section>`;
+  }
+
+  const warn = crit.filter(x => !x[1]);
+  const famNote = A.fam === 'EX' ? `Conecta con la emoción de tu pregunta: ${Q(A.c.sensacion)}.` : FAM[A.fam] ? `Conecta con la emoción de tu pregunta: ${famName(A.fam).toLowerCase()}.` : 'Tu pregunta todavía no tiene una emoción que cuidar; por eso esta acción empieza por ahí.';
+
+  return `
+  <div class="print-head"><img src="${$('.brand img').src}" alt="DotX"><div class="small muted">${esc(s.nombre)} · ${esc(s.grupo)} · Ronda ${s.ronda} · ${esc(humanDate())}</div></div>
+  <section class="card hero"><div class="blob"></div>
+    <div style="position:relative">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;flex-wrap:wrap"><span class="verdict ${V.c}"><span class="dot"></span>${V.n}</span><span class="round-tag">Ronda ${s.ronda}</span></div>
+      <h1 class="arch-name">${ar.n}</h1>
+      <p class="arch-sub">${ar.s}</p>
+      <p style="font-size:17.5px">${esc(archText(A, s))}</p>
+      <div class="quote-q">${esc(A.txt)}</div>
+      ${A.porValidar ? `<div class="also"><span>🧭</span><span><b>Por validar:</b> la forma está lista. Lo único que le falta es alguien de carne y hueso: dijiste que todavía no has hablado con nadie que viva este problema.</span></div>` : ''}
+      ${also ? `<div class="also"><span>➕</span><span><b>Y además:</b> ${esc(also)}</span></div>` : ''}
+      ${A.arch === 'A8' ? `<div class="also"><span>🎯</span><span><b>Punto de afinación:</b> ${esc(DIM[A.prio].n.toLowerCase())}.</span></div>` : ''}
+    </div>
+  </section>
+
+  <section class="card"><div class="section-title"><h2>Lo que funciona</h2></div>
+    ${fz.map(t=>`<div class="strength"><span class="ico">✓</span><span>${esc(t)}</span></div>`).join('')}
+  </section>
+
+  <section class="card"><div class="section-title"><h2>La anatomía de tu pregunta</h2></div>
+    <div class="anat-q">${anatQ}</div>
+    <div class="anat-rows">${anatRows}</div>
+  </section>
+
+  <section class="card"><div class="section-title"><h2>Seis dimensiones</h2></div>
+    <div class="dims">${bars}</div>
+    <p class="legend">Cada barra va de «Por reformular» (1) a «Ejemplar» (4). Este es un autodiagnóstico: combina lo que escribiste con lo que respondiste sobre tu pregunta.</p>
+  </section>
+
+  <section class="card"><div class="section-title"><h2>Termómetro de alcance</h2></div>
+    <div class="thermo"><div class="thermo-bar"><span class="z z1"></span><span class="z z2"></span><span class="z z3"></span><span class="z z4"></span><span class="z z5"></span>${markers}</div>
+    <div class="thermo-labels">${ZL.map((l,i)=>`<span class="${(i===zi || (A.termo==='desenfocada'&&(i===1||i===3)))?'on':''}">${l}</span>`).join('')}</div></div>
+    <p style="margin-top:12px">${esc(termoTxt)}</p>
+  </section>
+
+  <section class="card"><div class="section-title"><h2>Tus cinco ideas</h2></div>
+    <div class="types">${typeTiles}</div>
+    <p class="cross">${esc(crossIdeas(A, s))}</p>
+    ${!A.ideasDone ? `<button class="btn btn-ghost no-print" data-act="goIdeas" type="button" style="margin-top:10px">Hacer la prueba ahora</button>` : ''}
+  </section>
+
+  <section class="card"><div class="section-title"><span class="n">→</span><h2>Tu ruta de acción</h2></div>
+    <div class="route">
+      <div class="step"><span class="num">1</span><span class="kicker">${A.verdict==='solida'?'Para afinar':'Tu ajuste prioritario'}</span><h3>${DIM[pi.dim].n}</h3><p class="pista">${esc(pi.texto)}</p></div>
+      <div class="step"><span class="num">2</span><span class="kicker">Práctica <span class="tagline">${esc(pr.t)}</span></span><h3>${esc(pr.n)}</h3><ol>${pr.p.map(x=>`<li>${esc(x)}</li>`).join('')}</ol></div>
+      <div class="step"><span class="num">3</span><span class="kicker">En tu trabajo <span class="tagline">Esta semana</span></span><h3>${esc(tr.frente)}</h3><p style="margin-top:6px">${esc(tr.texto)}</p><p class="why">${esc(famNote)}</p></div>
+    </div>
+  </section>
+
+  <section class="card reflect"><p class="eyebrow">Para pensar</p><p class="big">${esc(reflexion(A))}</p></section>
+
+  ${compare}
+
+  <section class="card"><div class="section-title"><h2>Para tu ronda ${s.ronda+1}</h2></div>
+    ${warn.length ? `<p class="muted">Revisa que tu próxima versión cumpla estos criterios:</p><ul class="checklist">${warn.map(x=>`<li><span class="st warn">!</span>${esc(x[0])}</li>`).join('')}</ul>` : `<p>Los siete criterios están en verde. La próxima ronda es para afinar, no para arreglar.</p>`}
+    <p class="small muted" style="margin-top:12px">Nadie te va a dar la pregunta correcta: la vas a encontrar tú.</p>
+  </section>
+
+  <section class="card no-print"><div class="section-title"><h2>Descargar</h2></div>
+    <div class="dl-grid">
+      <button class="dl" data-act="pdf" type="button"><span class="fmt" style="background:#E5484D">PDF</span><span><span class="t">Diagnóstico completo</span><br><span class="s">Se abre la ventana de impresión: elige «Guardar como PDF».</span></span></button>
+      <button class="dl" data-act="png" type="button"><span class="fmt" style="background:#2C9D98">PNG</span><span><span class="t">Tarjeta de la pregunta</span><br><span class="s">Para compartirla o ponerla en la pared.</span></span></button>
+      <button class="dl" data-act="md" type="button"><span class="fmt" style="background:#783D7F">MD</span><span><span class="t">Archivo de datos</span><br><span class="s">El que recibe DotX. Ábrelo con cualquier editor de texto.</span></span></button>
+      <button class="dl" data-act="copy" type="button"><span class="fmt" style="background:#1E2A5E">TXT</span><span><span class="t">Copiar la pregunta</span><br><span class="s">Solo el texto, listo para pegar.</span></span></button>
+    </div>
+  </section>
+
+  <section class="card send no-print"><p class="eyebrow" style="color:#C3EAF0">Último paso</p><h2>Envía tu diagnóstico a DotX</h2>
+    <p class="lead">Tu facilitador recibe el archivo y te responde con una retroalimentación personal.</p>
+    ${CONFIG.PEDIR_CODIGO ? `<div class="field"><label for="f_codigo" style="color:#fff">Código del curso</label><input type="text" id="f_codigo" placeholder="Te lo da tu facilitador" autocomplete="off"></div>` : ''}
+    <button class="btn btn-teal" data-act="send" type="button" style="width:100%">Enviar a DotX</button>
+    <div class="send-status" id="sendStatus" role="status"></div>
+    <p class="send-note">Se envían tu nombre, tu correo, tu grupo, tu pregunta y este diagnóstico.${(history.find(h=>h.ronda===s.ronda)||{}).enviado ? ' Esta ronda ya fue enviada.' : ''}</p>
+  </section>
+
+  <div class="end-actions no-print">
+    <button class="btn btn-primary" data-act="newRound" type="button">Hacer otra ronda</button>
+    <button class="btn btn-ghost" data-act="newQuestion" type="button">Empezar una pregunta nueva</button>
+  </div>`;
+}
+
+/* ---------------- .md ---------------- */
+function slug(s){ return norm(s).replace(/[^a-z0-9]+/g,'-').replace(/^-|-$/g,'').replace(/(^|-)([a-z])/g,(m,a,b)=>a+b.toUpperCase()); }
+function fileName(){
+  const w = st.nombre.trim().split(/\s+/).filter(Boolean);
+  const nombre = w[0] || 'Estudiante', apellido = w.length >= 4 ? w[2] : (w[1] || '');
+  const who = apellido ? slug(apellido) + '-' + slug(nombre) : slug(nombre);
+  return `${(st.grupo||'SinGrupo').toUpperCase()}_${who}_r${st.ronda}_${today()}.md`;
+}
+function y(v){ return JSON.stringify(v == null ? '' : String(v)); }
+function buildMD(){
+  const A = LAST || analyze(st), s = st;
+  const vk = A.porValidar ? 'validar' : A.verdict;
+  const pi = pista(A, s), pr = practica(A, s), tr = trabajo(A, s);
+  const activas = [], descartadas = [];
+  Object.entries(A.sig).forEach(([id, arr]) => arr.forEach(x => { if (id === 'S3') return; (x.off ? descartadas : activas).push(id + (x.term ? ':' + x.term : '')); }));
+  const hist = history.filter(h => h.ronda < s.ronda);
+  const stc = {}; ['verbo','persona','meta','resultado','sensacion'].forEach(k => stc[k] = ingStatus(A, k));
+  const icon = {green:'🟢', amber:'🟡', red:'🔴'};
+  const L = A.L;
+  let md = `---
+app: pregunta-magica
+version_app: ${y(CONFIG.VERSION)}
+fecha: ${y(new Date().toISOString())}
+estudiante:
+  nombre: ${y(s.nombre.trim())}
+  correo: ${y(s.correo.trim())}
+  grupo: ${y(s.grupo)}
+ronda: ${s.ronda}
+contexto:
+  reto: ${y(s.reto.trim())}
+  a_quien_escucho: ${y(s.aQuien.trim())}
+  dolor_o_deseo: ${y(s.dolor.trim())}
+autodiagnostico:
+  evidencia: ${y(s.evidencia)}
+  universalidad: ${y(s.universalidad)}
+  idea_favorita: ${y(s.ideaFavorita)}
+  rol: ${y(s.rol)}
+  ambito: ${y(s.ambito)}
+pregunta:
+  texto: ${y(A.txt)}
+  verbo: ${y(A.c.verbo)}
+  persona: ${y(A.c.persona)}
+  meta: ${y(A.c.meta)}
+  resultado: ${y(A.c.resultado)}
+  sensacion: ${y(A.c.sensacion)}
+  editada_a_mano: ${!!(s.editadaManual && s.textoManual.trim())}
+ideas:
+${s.ideas.map(i => `  - { texto: ${y(i.t.trim())}, tipo: ${y(i.tipo)} }`).join('\n')}
+ideas_saltadas: ${!A.ideasDone}
+senales:
+  activas: [${activas.map(y).join(', ')}]
+  descartadas_por_usuario: [${descartadas.map(y).join(', ')}]
+diagnostico:
+  veredicto: ${y(vk)}
+  puntaje: ${A.score.toFixed(2)}
+  niveles: { D1: ${L.D1}, D2: ${L.D2}, D3: ${L.D3}, D4: ${L.D4}, D5: ${L.D5}, D6: ${L.D6} }
+  arquetipo: ${y(A.arch)}
+  arquetipo_nombre: ${y(ARCH[A.arch].n)}
+  rasgo_secundario: ${y(A.arch2)}
+  familia_emocional: ${y(A.fam)}
+  familia_emocional_nombre: ${y(famName(A.fam))}
+  termometro: ${y(A.termo)}
+  variedad_ideas: { tipos_distintos: ${A.nTypes}, dominante: ${y(A.dominante)}, nivel: ${y(A.variedad)} }
+  dimension_prioritaria: ${y(A.prio)}
+  practica: ${y(pr.id)}
+  bloque_trabajo: ${y(s.rol + '-' + A.fam)}
+historial:${hist.length ? '\n' + hist.map(h => `  - { ronda: ${h.ronda}, veredicto: ${y(h.veredicto)}, arquetipo: ${y(h.arquetipo)}, puntaje: ${Number(h.puntaje).toFixed(2)}, niveles: { D1: ${h.niveles.D1}, D2: ${h.niveles.D2}, D3: ${h.niveles.D3}, D4: ${h.niveles.D4}, D5: ${h.niveles.D5}, D6: ${h.niveles.D6} } }`).join('\n') : ' []'}
+---
+
+# Diagnóstico · Pregunta Mágica
+
+**Estudiante:** ${s.nombre.trim()} · **Grupo:** ${s.grupo} · **Ronda:** ${s.ronda} · **Fecha:** ${humanDate()}
+
+## La pregunta
+
+> ${A.txt}
+
+## Contexto
+
+- **Reto:** ${s.reto.trim() || '—'}
+- **A quién escuchó:** ${s.aQuien.trim() || '—'}
+- **Dolor o deseo:** ${s.dolor.trim() || '—'}
+
+## Veredicto
+
+${VERDICT[vk].e} **${VERDICT[vk].n}** · ${ARCH[A.arch].n} (${ARCH[A.arch].s})${A.arch2 ? `\nY además: ${archAlso(A)}` : ''}
+
+${archText(A, s)}${A.porValidar ? '\n\nPor validar: la forma está lista; falta hablar con alguien que viva el problema.' : ''}
+
+## Lo que funciona
+
+${strengths(A, s).map(t => '- ' + t).join('\n')}
+
+## Anatomía
+
+| Ingrediente | Texto | Estado |
+|---|---|---|
+${['persona','meta','resultado','sensacion','verbo'].map(k => `| ${ING_NAME[k]} | ${A.c[k] || '—'} | ${icon[stc[k][0]]} ${stc[k][1]} |`).join('\n')}
+
+## Seis dimensiones
+
+| Dimensión | Nivel |
+|---|---|
+${Object.keys(DIM).map(k => `| ${DIM[k].n} | ${L[k]} · ${LEVEL[L[k]]} |`).join('\n')}
+
+Puntaje interno (solo para el tutor): ${A.score.toFixed(2)} / 4.00
+
+## Alcance
+
+Termómetro: **${A.termo.replace('_',' ')}**
+
+## Las cinco ideas
+
+${s.ideas.map((i, n) => `${n+1}. ${i.t.trim() || '—'}${i.tipo ? ` (${TYPE[i.tipo].n})` : ''}`).join('\n')}
+
+${crossIdeas(A, s)}
+
+## Ruta de acción
+
+1. **${A.verdict === 'solida' ? 'Para afinar' : 'Ajuste prioritario'} · ${DIM[pi.dim].n}:** ${pi.texto}
+2. **Práctica · ${pr.n} (${pr.t}):**
+${pr.p.map(x => '   - ' + x).join('\n')}
+3. **En tu trabajo · ${tr.frente}:** ${tr.texto}
+
+## Pregunta de reflexión
+
+${reflexion(A)}
+
+## Para la ronda ${s.ronda + 1}
+
+${criteria(A).filter(x => !x[1]).map(x => '- [ ] ' + x[0]).join('\n') || 'Los siete criterios están en verde.'}
+`;
+  return md;
+}
+
+/* ---------------- acciones ---------------- */
+function download(name, blob){
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); setTimeout(()=>{ URL.revokeObjectURL(a.href); a.remove(); }, 400);
+}
+async function copyText(t){
+  try { await navigator.clipboard.writeText(t); return true; }
+  catch(e){ const ta = document.createElement('textarea'); ta.value = t; ta.style.position='fixed'; ta.style.opacity='0'; document.body.appendChild(ta); ta.select(); let ok=false; try{ ok = document.execCommand('copy'); }catch(_){} ta.remove(); return ok; }
+}
+async function makePNG(){
+  if (typeof html2canvas !== 'function'){ toast('No se pudo cargar el generador de imágenes. Revisa tu conexión.'); return; }
+  const A = LAST || analyze(st);
+  const html = (st.editadaManual && st.textoManual.trim()) ? esc(A.txt) : assemble(st, 'html').replace(/<span class="ph[^"]*">\([^)]*\)<\/span>/g, '…');
+  const q = $('#scQ'); q.innerHTML = html;
+  const len = A.txt.length; q.style.fontSize = (len <= 140 ? 66 : len <= 220 ? 56 : len <= 300 ? 48 : len <= 380 ? 42 : 36) + 'px';
+  $('#scWho').innerHTML = `<b>${esc(st.nombre.trim() || 'Pregunta mágica')}</b>${esc([st.grupo, humanDate()].filter(Boolean).join(' · '))}`;
+  try { if (document.fonts && document.fonts.ready) await document.fonts.ready; } catch(e){}
+  toast('Preparando la imagen…');
+  try {
+    const canvas = await html2canvas($('#shareCard'), {scale:1, backgroundColor:'#ffffff', useCORS:true, logging:false});
+    canvas.toBlob(b => { if (b) download(fileName().replace(/\.md$/, '_tarjeta.png'), b); }, 'image/png');
+  } catch(e){ toast('No se pudo generar la imagen.'); }
+}
+async function send(){
+  const box = $('#sendStatus');
+  const show = (cls, msg) => { box.className = 'send-status show ' + cls; box.innerHTML = msg; };
+  if (!CONFIG.SCRIPT_URL){
+    show('bad', 'El envío todavía no está activado en esta versión. Descarga el <b>archivo de datos (.md)</b> y entrégaselo a tu facilitador.');
+    return;
+  }
+  if (!st.nombre.trim() || !st.grupo){ show('bad', 'Falta tu nombre o tu grupo. Vuelve al inicio para completarlos.'); return; }
+  const codigo = CONFIG.PEDIR_CODIGO ? ($('#f_codigo')||{}).value?.trim() : '';
+  if (CONFIG.PEDIR_CODIGO && !codigo){ show('bad', 'Escribe el código del curso que te dio tu facilitador.'); return; }
+  const A = LAST || analyze(st);
+  const payload = {
+    codigo, archivo: fileName(), markdown: buildMD(),
+    resumen: { nombre: st.nombre.trim(), correo: st.correo.trim(), grupo: st.grupo, ronda: st.ronda, pregunta: A.txt,
+      veredicto: A.porValidar ? 'validar' : A.verdict, arquetipo: ARCH[A.arch].n, puntaje: A.score, niveles: A.L,
+      familia: famName(A.fam), termometro: A.termo, prioritaria: DIM[A.prio].n, version: CONFIG.VERSION }
+  };
+  show('wait', 'Enviando…');
+  const ctrl = new AbortController(); const to = setTimeout(()=>ctrl.abort(), 25000);
+  try {
+    const res = await fetch(CONFIG.SCRIPT_URL, { method:'POST', body: JSON.stringify(payload), signal: ctrl.signal });
+    const data = await res.json();
+    if (data && data.ok){
+      const h = history.find(h => h.ronda === st.ronda); if (h){ h.enviado = true; store('pm2.history', history); }
+      show('ok', '¡Listo! DotX recibió tu diagnóstico' + (data.archivo ? ` (<b>${esc(data.archivo)}</b>)` : '') + '. Tu facilitador te responderá por correo.');
+    } else {
+      show('bad', esc((data && data.error) || 'No se pudo enviar.') + ' Si el problema sigue, descarga el archivo .md y entrégaselo a tu facilitador.');
+    }
+  } catch(e){
+    show('bad', 'No pudimos conectar con DotX desde esta red. Descarga el <b>archivo de datos (.md)</b> y entrégaselo a tu facilitador.');
+  } finally { clearTimeout(to); }
+}
+
+/* ---------------- validación de pasos ---------------- */
+function validate(){
+  const name = STEPS[st.step];
+  if (name === 'inicio'){
+    if (!st.nombre.trim()) return 'Escribe tu nombre.';
+    if (!st.grupo) return 'Elige tu grupo.';
+    if (!st.rol) return 'Cuéntanos desde dónde trabajas este reto.';
+  }
+  if (name === 'contexto'){
+    if (!st.reto.trim()) return 'Escribe en qué reto estás trabajando.';
+    if (!st.evidencia) return 'Responde con cuántas personas hablaste.';
+    if (!st.ambito) return 'Elige quién vive el problema.';
+  }
+  if (name === 'frase'){
+    if (!st.universalidad || !st.ideaFavorita) return 'Responde las dos preguntas sobre tu pregunta.';
+  }
+  if (name === 'ideas'){
+    const miss = st.ideas.findIndex(i => i.t.trim() && !i.tipo);
+    if (miss >= 0) return `Elige el tipo de la idea ${miss+1}.`;
+    const empty = st.ideas.filter(i => !i.t.trim()).length;
+    if (empty) return `Te ${empty===1?'falta 1 idea':'faltan '+empty+' ideas'}. Si prefieres, salta la prueba por ahora.`;
+  }
+  return '';
+}
+function go(step){ st.step = Math.max(0, Math.min(STEPS.length-1, step)); if (st.step > 0) st.lastStep = st.step; save(); render(); window.scrollTo(0,0); }
+
+/* ---------------- actualizaciones en vivo ---------------- */
+function autoGrow(t){ t.style.height = 'auto'; t.style.height = (t.scrollHeight + 2) + 'px'; }
+function live(){
+  const name = STEPS[st.step];
+  if (ING_STEPS[name]){
+    renderAlerts(ING_STEPS[name].alerts, name === 'persona' ? ['persona'] : [name]);
+    const pv = $('#pv'); if (pv) pv.innerHTML = assemble(st,'html',name);
+    if (name === 'sensacion'){
+      const A = analyze(st);
+      const hits = new Set(); Object.entries(FAM).forEach(([k,F]) => { if (hasTerm(A.c.sensacion, F.f)) hits.add(k); });
+      $$('.fam').forEach(el => { const k = el.dataset.fam; const onF = hits.has(k); el.classList.toggle('on', onF); el.style.background = onF ? FAM[k].c : ''; });
+    }
+  }
+  if (name === 'frase'){
+    const A = renderAlerts(['S1','S2','S23','S22','S24','S14','S15','S5']);
+    const cl = $('#checklist'); if (cl) cl.innerHTML = criteria(A).map(([t,ok]) => `<li><span class="st ${ok?'ok':'warn'}">${ok?'✓':'!'}</span>${esc(t)}</li>`).join('');
+    const ra = $('#reasm'); if (ra) ra.innerHTML = st.editadaManual ? `<button class="btn-link" data-act="reassemble" type="button">Volver a armarla desde los ingredientes</button>` : '';
+    const wc = $('#wc'); if (wc){ const n = A.nw; wc.textContent = `${n} palabras · ${n < 15 ? 'quizás le falta algo' : n <= 45 ? 'cabe en un post-it' : 'más larga que un post-it'}`; }
+  }
+  if (name === 'ideas'){
+    const t = {}; st.ideas.forEach(i => { if (i.tipo) t[i.tipo] = 1; });
+    const n = Object.keys(t).length, w = st.ideas.filter(i=>i.t.trim()).length;
+    const v = $('#variety'); if (v) v.innerHTML = `<span style="font-size:22px">🧭</span><span>Llevas <b>${w} de 5</b> ideas y <b>${n} ${n===1?'tipo':'tipos'}</b> distintos.${n>=4?' Buena variedad.':''}</span>`;
+  }
+}
+
+/* ---------------- eventos ---------------- */
+document.addEventListener('input', e => {
+  const t = e.target;
+  if (t.dataset.k){ st[t.dataset.k] = t.value; save(); if (t.tagName === 'TEXTAREA') autoGrow(t); live(); }
+  else if (t.hasAttribute('data-frase')){ st.textoManual = t.value; st.editadaManual = t.value.trim() !== assemble(st,'text'); save(); autoGrow(t); live(); }
+  else if (t.dataset.idea != null){ st.ideas[+t.dataset.idea].t = t.value; st.ideasSaltadas = false; save(); autoGrow(t); live(); }
+});
+document.addEventListener('change', e => {
+  const t = e.target;
+  if (t.dataset.tipo != null){ st.ideas[+t.dataset.tipo].tipo = t.value; st.ideasSaltadas = false; save(); live(); }
+  if (t.dataset.k && t.tagName === 'SELECT'){ st[t.dataset.k] = t.value; save(); }
+});
+document.addEventListener('keydown', e => {
+  const t = e.target;
+  if (e.key === 'Enter' && !e.shiftKey && t.tagName === 'TEXTAREA' && (t.classList.contains('big-input') || t.dataset.idea != null)){ e.preventDefault(); const b = $('[data-act="next"]'); if (b && !t.hasAttribute('data-frase')) b.click(); }
+  if (e.key === 'Escape') closeModals();
+});
+document.addEventListener('paste', e => {
+  const t = e.target;
+  if (t.tagName === 'TEXTAREA' && t.classList.contains('big-input')){
+    const txt = (e.clipboardData || window.clipboardData).getData('text');
+    if (/\n/.test(txt)){ e.preventDefault(); const clean = txt.replace(/\s*\n+\s*/g,' '); const s = t.selectionStart, en = t.selectionEnd; t.value = t.value.slice(0,s) + clean + t.value.slice(en); t.selectionStart = t.selectionEnd = s + clean.length; t.dispatchEvent(new Event('input', {bubbles:true})); }
+  }
+});
+let confirmNew = 0;
+document.addEventListener('click', async e => {
+  const fill = e.target.closest('[data-fill]');
+  if (fill){ const k = fill.dataset.fill; st[k] = fill.dataset.v; save(); const f = $('#f_'+k); if (f){ f.value = st[k]; autoGrow(f); } live(); return; }
+  const chip = e.target.closest('[data-chip]');
+  if (chip){ st[chip.dataset.chip] = chip.dataset.v; save(); $$(`[data-chip="${chip.dataset.chip}"]`).forEach(b => { const on = b === chip; b.classList.toggle('on', on); b.setAttribute('aria-checked', on); }); $('#navErr') && ($('#navErr').textContent=''); return; }
+  const dis = e.target.closest('[data-dismiss]');
+  if (dis){ if (!st.descartadas.includes(dis.dataset.dismiss)) st.descartadas.push(dis.dataset.dismiss); save(); live(); return; }
+  const und = e.target.closest('[data-undo]');
+  if (und){ st.descartadas = st.descartadas.filter(k => k !== und.dataset.undo); save(); live(); return; }
+  const btn = e.target.closest('[data-act]'); if (!btn) return;
+  const act = btn.dataset.act;
+  if (act === 'next'){
+    const err = validate(); if (err){ $('#navErr').textContent = err; return; }
+    if (STEPS[st.step] === 'ideas') st.ideasSaltadas = false;
+    go(st.step + 1);
+  }
+  else if (act === 'back') go(st.step - 1);
+  else if (act === 'resume') go(Math.max(1, st.lastStep || 1));
+  else if (act === 'reset' || act === 'newQuestion'){
+    if (act === 'newQuestion' && Date.now() - confirmNew > 4000){ confirmNew = Date.now(); btn.textContent = 'Toca otra vez para confirmar'; setTimeout(()=>{ if (btn.isConnected) btn.textContent = 'Empezar una pregunta nueva'; }, 4000); return; }
+    const keep = {nombre:st.nombre, correo:st.correo, grupo:st.grupo, rol:st.rol};
+    st = Object.assign(BLANK(), keep); history = []; store('pm2.history', history); st.step = 1; save(); render(); window.scrollTo(0,0);
+  }
+  else if (act === 'reassemble'){ st.editadaManual = false; st.textoManual = ''; save(); render(); }
+  else if (act === 'skipIdeas'){ st.ideasSaltadas = true; save(); go(STEPS.indexOf('diagnostico')); }
+  else if (act === 'goIdeas') go(STEPS.indexOf('ideas'));
+  else if (act === 'newRound'){ st.ronda = Math.max(...history.map(h=>h.ronda), st.ronda) + 1; save(); go(STEPS.indexOf('persona')); toast('Ronda ' + st.ronda + ': ajusta lo que quieras y vuelve al diagnóstico.'); }
+  else if (act === 'pdf'){ window.print(); }
+  else if (act === 'png'){ makePNG(); }
+  else if (act === 'md'){ download(fileName(), new Blob([buildMD()], {type:'text/markdown;charset=utf-8'})); toast('Archivo .md descargado'); }
+  else if (act === 'copy'){ const ok = await copyText((LAST||analyze(st)).txt); toast(ok ? '¡Pregunta copiada!' : 'No se pudo copiar'); }
+  else if (act === 'send'){ btn.disabled = true; await send(); btn.disabled = false; }
+});
+
+/* ---------------- modales ---------------- */
+const EXAMPLES = [
+  {label:'Ejemplo · Aeropuerto', items:[
+    ['Muy amplia','¿Cómo podríamos hacer que la gente disfrute más el aeropuerto?','Es un buen propósito, pero es tan grande que no sabes por dónde empezar a idear; casi cualquier idea "cabe" ahí, lo cual paraliza.'],
+    ['Muy estrecha','¿Cómo podríamos poner más sillas con cargadores USB en la sala de espera?','Ya trae la solución incorporada (sillas + cargadores), así que mata la exploración antes de empezar: no deja espacio para otras ideas.'],
+    ['Perfecta','¿Cómo podríamos reducir el estrés de los pasajeros durante la espera antes del vuelo?','Define un problema claro y una persona concreta, pero deja abierto el "cómo": podría resolverse con mobiliario, entretenimiento, información en tiempo real, comida, etc.']]},
+  {label:'Ejemplo · Restaurante', items:[
+    ['Muy amplia','¿Cómo podríamos mejorar la experiencia de nuestros clientes?','Suena bien, pero "experiencia" lo abarca todo: comida, servicio, ambiente, precio. No hay por dónde agarrar la idea.'],
+    ['Muy estrecha','¿Cómo podríamos agregar un código QR al menú para que pidan más rápido?','Ya decidió que la solución es un QR en el menú; no deja espacio para explorar otras formas de agilizar el pedido.'],
+    ['Perfecta','¿Cómo podríamos hacer que los comensales sientan que su tiempo vale la pena, incluso cuando hay que esperar mesa?','Enfoca un momento específico (la espera) y una persona concreta (el comensal), sin imponer la solución.']]},
+  {label:'Ejemplo · App de banca digital', items:[
+    ['Muy amplia','¿Cómo podríamos hacer que nuestros usuarios confíen más en la app?','La confianza depende de decenas de factores (seguridad, diseño, soporte, transparencia); no da ninguna pista de por dónde empezar.'],
+    ['Muy estrecha','¿Cómo podríamos agregar autenticación biométrica al login?','Ya nombra la solución técnica (biometría); cierra la puerta a otras formas de resolver el problema real detrás de eso.'],
+    ['Perfecta','¿Cómo podríamos ayudar a los nuevos usuarios a sentirse seguros al hacer su primera transferencia?','Define el momento crítico (primera transferencia) y la persona (usuario nuevo), dejando el "cómo" completamente abierto.']]}
+];
+let lastFocus = null;
+function openModal(id){ lastFocus = document.activeElement; const o = $(id); o.classList.add('open'); o.setAttribute('aria-hidden','false'); setTimeout(()=>{ const c = $('.close', o); c && c.focus(); }, 30); document.body.style.overflow = 'hidden'; }
+function closeModals(){ if (!$('.overlay.open')) return; $$('.overlay.open').forEach(o => { o.classList.remove('open'); o.setAttribute('aria-hidden','true'); }); document.body.style.overflow = ''; if (lastFocus && lastFocus.focus) lastFocus.focus(); }
+function renderExamples(){ const r = EXAMPLES[exRound]; $('#exRound').textContent = r.label; $('#exNotes').innerHTML = r.items.map(([tag,q,ex]) => `<div><div class="note">${esc(q)}</div><span class="note-tag">${esc(tag)}</span><p class="note-ex">${esc(ex)}</p></div>`).join(''); }
+$('#helpBtn').addEventListener('click', () => openModal('#helpOverlay'));
+$('#examplesBtn').addEventListener('click', () => { renderExamples(); openModal('#examplesOverlay'); });
+$('#exNext').addEventListener('click', () => { exRound = (exRound + 1) % EXAMPLES.length; renderExamples(); });
+$$('.overlay').forEach(o => o.addEventListener('click', e => { if (e.target === o || e.target.closest('[data-close]')) closeModals(); }));
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Tab') return; const o = $('.overlay.open'); if (!o) return;
+  const f = $$('button, [href], input, select, textarea', o).filter(x => !x.disabled); if (!f.length) return;
+  if (e.shiftKey && document.activeElement === f[0]){ e.preventDefault(); f[f.length-1].focus(); }
+  else if (!e.shiftKey && document.activeElement === f[f.length-1]){ e.preventDefault(); f[0].focus(); }
+});
+
+/* exponer el motor para pruebas */
+window.PM = { analyze: s => analyze(Object.assign(BLANK(), s)), get state(){ return st; }, buildMD: () => buildMD() };
+
+if (st.step !== 0 && !(st.persona || st.reto)) st.step = 0;
+render();
+})();
+</script>
+</body>
+</html>
